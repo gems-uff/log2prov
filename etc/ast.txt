@@ -1,0 +1,39 @@
+expressao : expressaoSeEntao | substringCMD | containsCMD | replaceCMD | testCMD | matchCMD |
+            expressaoBooleana | atribuicao | literal | statement | [line] | [tokens] | [agents] | [entities] | [activities]
+
+expressaoSeEntao : (expressaoBooleana ? literal | statement) | 
+                   (expressaoBooleana ? literal | statement : literal | statement) | 
+				   (expressaoBooleana ? literal | statement : expressaoSeEntao)
+
+expressaoBooleana : testCMD | containsCMD | true | false
+
+atribuicao : var = expressaoSeEntao | literal
+
+replaceCMD = literal.replace(literal, literal) | replaceCMD.replace(literal,literal)
+
+matchCMD = literal.match(literal, regexp) | matchCMD.match(literal,regexp)
+
+substringCMD = literal.substring(numero,numero) | substringCMD.substring(numero,numero)
+
+containsCMD = literal.contains(literal)
+
+testCMD : testRegexp(literal, regexp)
+
+numero : [0-9]+
+
+literal : var | quoted_string
+
+statement : actedOnBehalfOf($var,$var) | wasAttributedTo($var,$var) | wasDerivedFrom($var,$var) | wasGeneratedBy($var,$var) | used($var,$var) | wasAssociatedWith($var,$var)
+
+var : [A-Za-z][A-Za-z0-9]*
+regexp : ^((?:(?:[^?+*{}()[\]\\|]+|\\.|\[(?:\^?\\.|\^[^\\]|[^\\^])(?:[^\]\\]+|\\.)*\]|\((?:\?[:=!]|\?<[=!]|\?>)?(?1)??\)|\(\?(?:R|[+-]?\d+)\))(?:(?:[?+*]|\{\d+(?:,\d*)?\})[?+]?)?|\|)*)$
+
+
+
+
+
+
+
+
+
+
