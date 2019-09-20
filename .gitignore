@@ -1,0 +1,23 @@
+target/
+.settings/
+.classpath
+.project
+
+.metadata
+.recommenders
+JNIGPUMatrix/kernel.o
+JNIGPUMatrix/libMatrixProcessor.o
+JNIGPUMatrix/resources/
+JNIGPUMatrix/jar/
+RemoteSystemsTempFile/
+*.dylib
+*.so
+*.o
+*.so.*
+*.log
+*.class
+*.sqlite
+*.jar
+*~
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
