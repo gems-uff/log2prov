@@ -17,9 +17,9 @@ public class IfThenElseExpression extends Expression {
 			e.setExpression(super.getStringExpression());
 			throw e;
 		} else {
-			String[] slices = getStringExpression().split(CONDITION_SEPARATOR);
+			String[] slices = getStringExpression().split("\\s*\\"+CONDITION_SEPARATOR+"\\s*");
 			condition = new BooleanExpression(slices[0]);
-			String[] thenElse = slices[1].split(ELSE_SEPARATOR);
+			String[] thenElse = slices[1].split("\\s*"+ELSE_SEPARATOR+"\\s*");
 			String then = thenElse[0];
 			trueConsequence = new Expression(then);
 			String elze = null;
@@ -32,9 +32,9 @@ public class IfThenElseExpression extends Expression {
 
 	@Override
 	public String parse(Map<String, Expression> tokens, String line) throws InvalidExpression {
-		String result = "";
+		String result = ""; 
 		if (condition.parse(tokens, line).equals(TRUE)) {
-			result = trueConsequence.parse(tokens, line);
+			result = trueConsequence.parse(tokens, line );
 		} else if (condition.parse(tokens, line).equals(FALSE)) {
 			result = falseConsequence.parse(tokens, line);
 		} else {

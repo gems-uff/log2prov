@@ -20,7 +20,7 @@ public class AttributionExpression extends Expression {
 			e.setExpression(super.getStringExpression());
 			throw e;
 		} else {
-			String[] slices = stringExpression.split("=");
+			String[] slices = stringExpression.split("\\s*=\\s*");
 			String left = slices[0];
 			String right = slices[1];
 			if (left != null && right != null) {
@@ -33,12 +33,12 @@ public class AttributionExpression extends Expression {
 	@Override
 	public String parse(Map<String, Expression> tokens, String line) throws InvalidExpression {
 		String result = "";
-		if (valueExpression.getType() == LITERAL) {
-			LiteralExpression literal = new LiteralExpression(valueExpression.getStringExpression());
-			result = literal.parse(tokens, line);
-		} else if (valueExpression.getType() == IF_THEN_ELSE) {
-			IfThenElseExpression ifThenElse = new IfThenElseExpression(valueExpression.getStringExpression());
-			result = ifThenElse.parse(tokens, line);
+		try {
+			result = new Expression(super.getStringExpression()).parse(tokens, line);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvalidExpression("Erro ao tentar processar expressão " + super.getStringExpression()
+					+ "! Detalhes: " + e.getMessage());
 		}
 		return result;
 	}

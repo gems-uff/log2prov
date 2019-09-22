@@ -19,9 +19,6 @@ public class ConfigurationLogReader {
 	private LanguageDefinitions definitions;
 	private boolean isHeaderLine;
 	private boolean isHeaderToken;
-	private boolean isHeaderAgents;
-	private boolean isHeaderEntities;
-	private boolean isHeaderActivities;
 	private boolean isHeaderStatements;
 
 	public ConfigurationLogReader() {
@@ -48,12 +45,6 @@ public class ConfigurationLogReader {
 					processHeaderLineContent(line);
 				} else if (isHeaderToken) {
 					processHeaderTokenContent(line);
-				} else if (isHeaderAgents) {
-					processHeaderAgentContent(line);
-				} else if (isHeaderEntities) {
-					processHeaderEntitiesContent(line);
-				} else if (isHeaderActivities) {
-					processHeaderActivitiesContent(line);
 				} else if (isHeaderStatements) {
 					processHeaderStatementsContent(line);
 				}
@@ -68,26 +59,13 @@ public class ConfigurationLogReader {
 		}
 	}
 
-	private void processHeaderAgentContent(String line) {
-		// TODO Auto-generated method stub
-
-	}
-
 	private void processHeaderStatementsContent(String line) {
-		// TODO Auto-generated method stub
-		
+		if (line != null && line.length() > 0) {
+			Expression expr = new Expression(line);
+			this.definitions.getStatements().add(expr);
+			isHeaderStatements = expr.isEndHeaderToken(line);
+		}
 	}
-
-	private void processHeaderActivitiesContent(String line) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void processHeaderEntitiesContent(String line) {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 	private void processHeaderLineContent(String line) {
 		Expression expr = new Expression(line);
@@ -99,12 +77,14 @@ public class ConfigurationLogReader {
 	}
 
 	private void processHeaderTokenContent(String line) throws InvalidExpression {
-		Expression expr = new Expression(line);
-		if (expr.getType() == ATTRIBUTION) {
-			AttributionExpression att = new AttributionExpression(line);
-			this.definitions.getTokens().put(att.getVar(), att.getValue());
+		if (line != null && line.length() > 0) {
+			Expression expr = new Expression(line);
+			if (expr.getType() == ATTRIBUTION) {
+				AttributionExpression att = new AttributionExpression(line);
+				this.definitions.getTokens().put(att.getVar(), att.getValue());
+			}
+			isHeaderToken = expr.isEndHeaderToken(line);
 		}
-		isHeaderToken = expr.isEndHeaderToken(line);
 
 	}
 
@@ -120,24 +100,10 @@ public class ConfigurationLogReader {
 			isHeaderToken = true;
 			break;
 		}
-		case HEADER_AGENTS: {
-			isHeaderAgents = true;
-			break;
-		}
-		case HEADER_ENTITIES: {
-			isHeaderEntities = true;
-			break;
-		}
-		case HEADER_ACTIVITIES: {
-			isHeaderActivities = true;
-			break;
-		}
 		case HEADER_STATEMENTS: {
 			isHeaderStatements = true;
 			break;
 		}
-
-
 		default:
 			break;
 		}

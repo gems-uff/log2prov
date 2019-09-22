@@ -3,11 +3,14 @@ package language;
 import java.util.Map;
 
 import exception.InvalidExpression;
+import util.TokenChecker;
 
 public class BooleanExpression extends Expression {
 
 	public BooleanExpression(String expr) throws InvalidExpression {
-		if (getType() != BOOLEAN) {
+		super(expr);
+		if (!(TokenChecker.getInstance().checkTestRegexp(expr) || TokenChecker.getInstance().checkContains(expr)
+				|| TokenChecker.getInstance().checkTrue(expr) || TokenChecker.getInstance().checkFalse(expr))) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;
@@ -17,26 +20,14 @@ public class BooleanExpression extends Expression {
 	@Override
 	public String parse(Map<String, Expression> tokens, String line) throws InvalidExpression {
 		String result = "";
-		int type = getType(super.getStringExpression());
-		switch (type) {
-		case TEST_REGEXP: {
+		if (TokenChecker.getInstance().checkTestRegexp(super.getStringExpression())) {
 			result = new TestRegexpExpression(super.getStringExpression()).parse(tokens, line);
-			break;
-		}
-		case CONTAINS: {
+		} else if (TokenChecker.getInstance().checkContains(super.getStringExpression())) {
 			result = new ContainsExpression(super.getStringExpression()).parse(tokens, line);
-			break;
-		}
-		case TRUE_TYPE: {
+		} else if (TokenChecker.getInstance().checkTrue(super.getStringExpression())) {
 			result = TRUE;
-			break;
-		}
-		case FALSE_TYPE: {
+		} else if (TokenChecker.getInstance().checkFalse(super.getStringExpression())) {
 			result = FALSE;
-			break;
-		}
-		default:
-			break;
 		}
 		return result;
 	}
