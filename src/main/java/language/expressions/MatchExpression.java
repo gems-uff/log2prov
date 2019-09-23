@@ -1,16 +1,17 @@
-package language;
+package language.expressions;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import exception.InvalidExpression;
+import util.TokenChecker;
 
 public class MatchExpression extends Expression {
 
 	public MatchExpression(String expr) throws InvalidExpression {
 		super(expr);
-		if (getType() != MATCH) {
+		if (!TokenChecker.getInstance().checkMatch(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

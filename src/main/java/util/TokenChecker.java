@@ -1,6 +1,6 @@
 package util;
 
-import static language.ExpressionInterface.*;
+import static language.expressions.ExpressionInterface.*;
 
 public class TokenChecker {
 
@@ -17,17 +17,17 @@ public class TokenChecker {
 		return token != null && token.length() == 0;
 	}
 	
-	public boolean checkSet(String token) {
+	public boolean checkVarSet(String token) {
 		if (token != null && token.contains(",")) {
 			String slices[] = token.split("\\s*,\\s*");
-			boolean allVars = true;
+			boolean allFilled = true;
 			for (int i = 0; i < slices.length; i++) {
-				if (!checkAccessVar(slices[i]) || !checkVar(slices[i]) || !checkIfThenElse(slices[i])) {
-					allVars = false;
+				if (!isEmpty(slices[i]) && slices[i].substring(0,1).equals("$")) {
+					allFilled = false;
 					break;
 				}
 			}
-			return allVars;
+			return allFilled;
 		}
 		return false;
 	}
@@ -123,7 +123,7 @@ public class TokenChecker {
 	}
 
 	public boolean checkMatch(String token) {
-		if (token != null & token.contains(".match(")) {
+		if (token != null && token.contains(".match(")) {
 			String[] slices = token.split("\\.match\\("); 
 			String left = slices[0];
 			if (left != null && slices.length > 1) {

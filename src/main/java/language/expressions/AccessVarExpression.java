@@ -1,14 +1,15 @@
-package language;
+package language.expressions;
 
 import java.util.Map;
 
 import exception.InvalidExpression;
+import util.TokenChecker;
 
-public class NumberExpression extends Expression {
+public class AccessVarExpression extends Expression {
 
-	public NumberExpression(String expression) throws InvalidExpression {
-		super(expression);
-		if (getType() != NUMBER) {
+	public AccessVarExpression(String expr) throws InvalidExpression {
+		super(expr);
+		if (!TokenChecker.getInstance().checkAccessVar(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;
@@ -19,7 +20,7 @@ public class NumberExpression extends Expression {
 	public String parse(Map<String, Expression> tokens, String line) throws InvalidExpression {
 		String result = "";
 		try {
-			result = super.getStringExpression();
+			result = tokens.get(super.getStringExpression().substring(1)).parse(tokens, line);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidExpression("Erro ao tentar processar expressão " + super.getStringExpression()
@@ -27,4 +28,5 @@ public class NumberExpression extends Expression {
 		}
 		return result;
 	}
+
 }

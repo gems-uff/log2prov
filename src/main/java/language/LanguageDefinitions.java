@@ -1,15 +1,18 @@
-package processor;
+package language;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import language.Expression;
+import language.expressions.Expression;
 
 public class LanguageDefinitions {
 	
 	private Map<String, Expression> tokens;
+	private List<String> agents;
+	private List<String> entities;
+	private List<String> activities;
 	private List<Expression> statements;
 	private Expression lineTest;
 
@@ -17,6 +20,9 @@ public class LanguageDefinitions {
 		super();
 		this.setTokens(new HashMap<>());
 		this.setStatements(new ArrayList<>());
+		this.setAgents(new ArrayList<>());
+		this.setActivities(new ArrayList<>());
+		this.setEntities(new ArrayList<>());
 	}
 
 	
@@ -44,5 +50,35 @@ public class LanguageDefinitions {
 
 	public void setLineTest(Expression lineTest) {
 		this.lineTest = lineTest;
+	}
+
+
+	public List<String> getAgents() {
+		return agents;
+	}
+
+
+	public void setAgents(List<String> agents) {
+		this.agents = agents;
+	}
+
+
+	public List<String> getEntities() {
+		return entities;
+	}
+
+
+	public void setEntities(List<String> entities) {
+		this.entities = entities;
+	}
+
+
+	public List<String> getActivities() {
+		return activities;
+	}
+
+
+	public void setActivities(List<String> activities) {
+		this.activities = activities;
 	}
 }

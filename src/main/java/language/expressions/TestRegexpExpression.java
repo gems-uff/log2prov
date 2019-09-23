@@ -1,4 +1,4 @@
-package language;
+package language.expressions;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -9,9 +9,9 @@ import util.TokenChecker;
 
 public class TestRegexpExpression extends Expression {
 
-	public TestRegexpExpression(String stringExpression) throws InvalidExpression {
-		super(stringExpression);
-		if (!TokenChecker.getInstance().checkTestRegexp(stringExpression)) {
+	public TestRegexpExpression(String expr) throws InvalidExpression {
+		super(expr);
+		if (!TokenChecker.getInstance().checkTestRegexp(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

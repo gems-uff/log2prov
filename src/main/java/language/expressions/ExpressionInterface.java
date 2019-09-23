@@ -1,4 +1,4 @@
-package language;
+package language.expressions;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -27,7 +27,7 @@ public interface ExpressionInterface {
 	public static final int LITERAL = 7;
 	public static final int VAR = 8;
 	public static final int ACCESS_VAR = 9;
-	public static final int SET = 10;
+	public static final int VAR_SET = 10;
 	public static final int ATTRIBUTION = 11;
 	public static final int BOOLEAN = 12;
 	public static final int IF_THEN_ELSE = 13;

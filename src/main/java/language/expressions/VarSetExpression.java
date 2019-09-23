@@ -1,26 +1,30 @@
-package language;
+package language.expressions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import exception.InvalidExpression;
+import util.TokenChecker;
 
-public class SetExpression extends Expression {
+public class VarSetExpression extends Expression {
 
 	private List<Expression> expressions;
+	private List<String> vars;
 
-	public SetExpression(String stringExpression) throws InvalidExpression {
-		super(stringExpression);
+	public VarSetExpression(String expr) throws InvalidExpression {
+		super(expr);
 		this.expressions = new ArrayList<Expression>();
-		if (getType() != SET) {
+		this.vars = new ArrayList<>();
+		if (TokenChecker.getInstance().checkVarSet(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;
 		} else {
-			String[] slices = stringExpression.split("\\s*,\\s*");
+			String[] slices = expr.split("\\s*,\\s*");
 			for (int i = 0; i < slices.length; i++) {
 				expressions.add(new Expression(slices[i]));
+				vars.add(slices[i].substring(1,slices[i].length()));
 			}
 		}
 	}
@@ -48,6 +52,14 @@ public class SetExpression extends Expression {
 
 	public void setExpressions(List<Expression> expressions) {
 		this.expressions = expressions;
+	}
+
+	public List<String> getVars() {
+		return vars;
+	}
+
+	public void setVars(List<String> vars) {
+		this.vars = vars;
 	}
 
 }

@@ -1,8 +1,9 @@
-package language;
+package language.expressions;
 
 import java.util.Map;
 
 import exception.InvalidExpression;
+import util.TokenChecker;
 
 public class AttributionExpression extends Expression {
 
@@ -13,14 +14,14 @@ public class AttributionExpression extends Expression {
 		super();
 	}
 
-	public AttributionExpression(String stringExpression) throws InvalidExpression {
-		super(stringExpression);
-		if (getType() != ATTRIBUTION) {
+	public AttributionExpression(String expr) throws InvalidExpression {
+		super(expr);
+		if (!TokenChecker.getInstance().checkAttribution(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;
 		} else {
-			String[] slices = stringExpression.split("\\s*=\\s*");
+			String[] slices = expr.split("\\s*=\\s*");
 			String left = slices[0];
 			String right = slices[1];
 			if (left != null && right != null) {

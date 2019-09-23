@@ -1,6 +1,6 @@
 package language;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,14 +10,11 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import exception.InvalidExpression;
-import processor.LanguageDefinitions;
+import language.expressions.BooleanExpression;
+import language.expressions.Expression;
+import language.expressions.StringExpression;
 
 class ExpressionTest {
-	/*
-	
-	
-	
-	 */
 	
 	@Test
 	void testParse1() throws InvalidExpression {
@@ -42,7 +39,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("hadMember(InspecaoAction, br.mil.mar.dsm.sinais.controlador)",expression.parse(tokens, line));
+			assertEquals("hadMember(\"InspecaoAction\", \"br.mil.mar.dsm.sinais.controlador\")",expression.parse(tokens, line));
 		}
 	}
 	
@@ -69,7 +66,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("wasAssociatedWith(LogEventoDAOImpl, io)",expression.parse(tokens, line));
+			assertEquals("wasAssociatedWith(\"LogEventoDAOImpl\", \"io\")",expression.parse(tokens, line));
 		}
 	}
 	
@@ -96,7 +93,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("wasAssociatedWith(InspecaoAction, io)",expression.parse(tokens, line));
+			assertEquals("wasAssociatedWith(\"InspecaoAction\", \"io\")",expression.parse(tokens, line));
 		}
 	}
 	
@@ -123,7 +120,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("wasAssociatedWith(SampConsumerRS, comm)",expression.parse(tokens, line));
+			assertEquals("wasAssociatedWith(\"SampConsumerRS\", \"comm\")",expression.parse(tokens, line));
 		}
 	}
 	
@@ -150,7 +147,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("wasAssociatedWith(ReportHandlerAction, cpu)",expression.parse(tokens, line));
+			assertEquals("wasAssociatedWith(\"ReportHandlerAction\", \"cpu\")",expression.parse(tokens, line));
 		}
 	}
 	
@@ -177,7 +174,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("actedOnBehalfOf(LogEventoDAOImpl, usuario)",expression.parse(tokens, line));
+			assertEquals("actedOnBehalfOf(\"LogEventoDAOImpl\", \"usuario\")",expression.parse(tokens, line));
 		}
 	}
 

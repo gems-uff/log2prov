@@ -1,4 +1,4 @@
-package language;
+package language.expressions;
 
 import java.util.Map;
 
@@ -7,9 +7,9 @@ import util.TokenChecker;
 
 public class ContainsExpression extends Expression {
 
-	public ContainsExpression(String stringExpression) throws InvalidExpression {
-		super(stringExpression);
-		if (!TokenChecker.getInstance().checkContains(stringExpression)) {
+	public ContainsExpression(String expr) throws InvalidExpression {
+		super(expr);
+		if (!TokenChecker.getInstance().checkContains(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

@@ -1,4 +1,4 @@
-package language;
+package language.expressions;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -9,15 +9,15 @@ import util.TokenChecker;
 
 public class Expression implements ExpressionInterface {
 
-	private String stringExpression;
+	private String expr;
 
 	public Expression() {
 		super();
 	}
 
-	public Expression(String stringExpression) {
+	public Expression(String expr) {
 		this();
-		this.stringExpression = stringExpression;
+		this.expr = expr;
 	}
 
 	public String matchFirst(String line, String regexp) {
@@ -31,23 +31,18 @@ public class Expression implements ExpressionInterface {
 	}
 
 	public boolean isEndHeaderToken(String token) {
-		int type = getType(token);
-		return type > 0 && type < 6;
+		return !(getType(token) == HEADER_STATEMENTS || getType(token) == HEADER_TOKENS
+				|| getType(token) == HEADER_AGENTS || getType(token) == HEADER_ACTIVITIES
+				|| getType(token) == HEADER_ENTITIES);
 	}
 
 	public int getType() {
-		return getType(this.stringExpression);
+		return getType(this.expr);
 	}
 
 	protected int getType(String token) {
 		int type = EMPTY;
 		if (token != null && token.length() > 0) {
-			if (token.contains(FALSE)) {
-				return FALSE_TYPE;
-			}
-			if (token.contains(TRUE)) {
-				return TRUE_TYPE;
-			}
 			if (token.contains("[line]")) {
 				return HEADER_LINE;
 			}
@@ -93,8 +88,8 @@ public class Expression implements ExpressionInterface {
 			if (TokenChecker.getInstance().checkStatement(token)) {
 				return STATEMENT;
 			}
-			if (TokenChecker.getInstance().checkSet(token)) {
-				return SET;
+			if (TokenChecker.getInstance().checkVarSet(token)) {
+				return VAR_SET;
 			}
 			if (TokenChecker.getInstance().checkVar(token)) {
 				return VAR;
@@ -107,11 +102,11 @@ public class Expression implements ExpressionInterface {
 	}
 
 	public String getStringExpression() {
-		return stringExpression;
+		return expr;
 	}
 
-	public void setStringExpression(String stringExpression) {
-		this.stringExpression = stringExpression;
+	public void setStringExpression(String expr) {
+		this.expr = expr;
 	}
 
 	@Override
@@ -120,47 +115,47 @@ public class Expression implements ExpressionInterface {
 		int type = getType();
 		switch (type) {
 		case QUOTED_STRING: {
-			result = new QuotedStringExpression(this.stringExpression).parse(tokens, line);
+			result = new QuotedStringExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case ACCESS_VAR: {
-			result = new AccessVarExpression(this.stringExpression).parse(tokens, line);
+			result = new AccessVarExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case ATTRIBUTION: {
-			result = new AttributionExpression(this.stringExpression).parse(tokens, line);
+			result = new AttributionExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case IF_THEN_ELSE: {
-			result = new IfThenElseExpression(this.stringExpression).parse(tokens, line);
+			result = new IfThenElseExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case BOOLEAN: {
-			result = new BooleanExpression(this.stringExpression).parse(tokens, line);
+			result = new BooleanExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case MATCH: {
-			result = new MatchExpression(this.stringExpression).parse(tokens, line);
+			result = new MatchExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case REPLACE: {
-			result = new ReplaceExpression(this.stringExpression).parse(tokens, line);
+			result = new ReplaceExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case STATEMENT: {
-			result = new StatementExpression(this.stringExpression).parse(tokens, line);
+			result = new StatementExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case SUBSTRING: {
-			result = new SubstringExpression(this.stringExpression).parse(tokens, line);
+			result = new SubstringExpression(this.expr).parse(tokens, line);
 			break;
 		}
-		case SET: {
-			result = new SetExpression(this.stringExpression).parse(tokens, line);
+		case VAR_SET: {
+			result = new VarSetExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case NUMBER: {
-			result = new NumberExpression(this.stringExpression).parse(tokens, line);
+			result = new NumberExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		default:
@@ -171,6 +166,6 @@ public class Expression implements ExpressionInterface {
 
 	@Override
 	public String toString() {
-		return "[stringExpression=" + stringExpression + "]";
+		return "[expr=" + expr + "]";
 	}
 }

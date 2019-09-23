@@ -1,8 +1,9 @@
-package language;
+package language.expressions;
 
 import java.util.Map;
 
 import exception.InvalidExpression;
+import util.TokenChecker;
 
 public class IfThenElseExpression extends Expression {
 
@@ -12,7 +13,7 @@ public class IfThenElseExpression extends Expression {
 
 	public IfThenElseExpression(String expression) throws InvalidExpression {
 		super(expression);
-		if (getType() != IF_THEN_ELSE) {
+		if (!TokenChecker.getInstance().checkIfThenElse(expression)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;
