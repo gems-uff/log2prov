@@ -26,7 +26,7 @@ public class TestRegexpExpression extends Expression {
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
 				String firstParam = innerSlice[0];
-				String secondParam = innerSlice[1].substring(0, innerSlice[1].indexOf(")")).replace("\"", "");
+				String secondParam = innerSlice[1].substring(0, innerSlice[1].lastIndexOf(")"));
 				Expression leftLiteral = new Expression(firstParam);
 				Expression rightLiteral = new Expression(secondParam);
 				Pattern p = Pattern.compile(rightLiteral.parse(tokens, line));

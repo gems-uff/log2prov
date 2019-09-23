@@ -19,7 +19,10 @@ import exception.InvalidExpression;
 import language.LanguageDefinitions;
 import language.expressions.AttributionExpression;
 import language.expressions.Expression;
+import language.expressions.IfThenElseExpression;
+import language.expressions.StatementExpression;
 import language.expressions.VarSetExpression;
+import util.TokenChecker;
 
 public class ConfigurationFileReader {
 
@@ -47,9 +50,15 @@ public class ConfigurationFileReader {
 		int lineNumber = 1;
 		try {
 			String line = br.readLine();
-			while (line !=  null) {
+			if (line != null) {
+				line = line.trim();
+			}
+			while (line != null) {
 				processLine(line);
 				line = br.readLine();
+				if (line != null) {
+					line = line.trim();
+				}
 				if (isHeaderLine) {
 					processHeaderLineContent(line);
 				} else if (isHeaderToken) {
@@ -61,7 +70,7 @@ public class ConfigurationFileReader {
 				} else if (isHeaderEntities) {
 					processHeaderEntitiesContent(line);
 				} else if (isHeaderStatements) {
-					processHeaderStatementsContent( line);
+					processHeaderStatementsContent(line);
 				}
 				lineNumber++;
 			}
@@ -74,9 +83,17 @@ public class ConfigurationFileReader {
 		}
 	}
 
-	private void processHeaderStatementsContent(String line) {
+	private void processHeaderStatementsContent(String line) throws InvalidExpression {
 		if (line != null && line.length() > 0) {
-			Expression expr = new Expression(line);
+			Expression expr = null;
+			if (TokenChecker.getInstance().checkIfThenElse(line)) {
+				expr = new IfThenElseExpression(line);
+			} else if (TokenChecker.getInstance().checkStatement(line)) {
+				expr = new StatementExpression(line);
+			}
+			if (expr == null) {
+				throw new InvalidExpression("Statement definition not recognized inside [statements]");
+			}
 			this.definitions.getStatements().add(expr);
 			isHeaderStatements = expr.isEndHeaderToken(line);
 		}

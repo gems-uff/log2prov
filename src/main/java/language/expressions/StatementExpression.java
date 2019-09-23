@@ -26,7 +26,9 @@ public class StatementExpression extends Expression {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				String secondParam = innerSlice[1].substring(0, innerSlice[1].indexOf(")"));
+				String secondParam = innerSlice[1].contains(")")
+						? innerSlice[1].substring(0, innerSlice[1].indexOf(")"))
+						: innerSlice[1];
 				Expression leftLiteral = new Expression(innerSlice[0]);
 				Expression rightLiteral = new Expression(secondParam);
 				String param1 = leftLiteral.parse(tokens, line);
@@ -35,7 +37,7 @@ public class StatementExpression extends Expression {
 						&& param2 != null && param2.length() > 0;
 			}
 		} catch (Exception e) {
-			 isValid = false;
+			isValid = false;
 		}
 		return isValid;
 	}
@@ -47,11 +49,14 @@ public class StatementExpression extends Expression {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				String secondParam = innerSlice[1].substring(0, innerSlice[1].indexOf(")"));
+				String secondParam = innerSlice[1].contains(")")
+						? innerSlice[1].substring(0, innerSlice[1].indexOf(")"))
+						: innerSlice[1];
 				Expression leftLiteral = new Expression(innerSlice[0]);
 				Expression rightLiteral = new Expression(secondParam);
-				result = super.getStringExpression().replace(innerSlice[0], "\""+leftLiteral.parse(tokens, line)+"\"");
-				result = result.replace(secondParam, "\""+rightLiteral.parse(tokens, line)+"\"");
+				result = super.getStringExpression().replace(innerSlice[0],
+						"\"" + leftLiteral.parse(tokens, line) + "\"");
+				result = result.replace(secondParam, "\"" + rightLiteral.parse(tokens, line) + "\"");
 				result = RegexpUtil.getInstance().replace(result, "\\s*,\\s*", ", ");
 			}
 		} catch (Exception e) {

@@ -60,7 +60,7 @@ public class IfThenElseExpression extends Expression {
 		this.falseConsequence = falseConsequence;
 	}
 
-	public Expression getCondition() {
+	public BooleanExpression getCondition() {
 		return condition;
 	}
 

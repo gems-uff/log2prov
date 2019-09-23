@@ -2,11 +2,14 @@ package log2prov;
 
 import static language.expressions.ExpressionInterface.TRUE;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +17,12 @@ import java.util.Map;
 
 import exception.InvalidExpression;
 import language.expressions.Expression;
+import language.expressions.IfThenElseExpression;
 import language.expressions.StatementExpression;
 import language.expressions.StringExpression;
 import readers.ConfigurationFileReader;
+import util.FileUtil;
+import util.TokenChecker;
 
 public class Main {
 
@@ -30,7 +36,7 @@ public class Main {
 		super();
 		this.agents = new ArrayList<>();
 		this.activities = new ArrayList<>();
-		this.activities = new ArrayList<>();
+		this.entities = new ArrayList<>();
 		this.namespacePrefix = "default";
 		this.namespace = "";
 	}
@@ -39,9 +45,6 @@ public class Main {
 		try {
 			ConfigurationFileReader config = new ConfigurationFileReader(definitionsFile);
 			config.readFile();
-			agents = config.getDefinitions().getAgents();
-			activities = config.getDefinitions().getActivities();
-			entities = config.getDefinitions().getActivities();
 			FileWriter fw = new FileWriter(outputFile);
 			BufferedReader br = new BufferedReader(new FileReader(new File(inputFile)));
 			int lineNumber = 1;
@@ -52,9 +55,12 @@ public class Main {
 			} else {
 				fw.write("\n");
 			}
+			int totalLines = FileUtil.getInstance().countLines(inputFile) + 1;
 			try {
 				String line = br.readLine();
 				while (line != null) {
+					System.out.print("\rProcessing line " + lineNumber + " of " + totalLines + "...");
+					line = line.trim();
 					config.getDefinitions().getTokens().put("line", new StringExpression(line));
 					if (config.getDefinitions().getLineTest().parse(config.getDefinitions().getTokens(), line)
 							.equals(TRUE)) {
@@ -64,7 +70,10 @@ public class Main {
 						processStatements(config, fw, line);
 					}
 					lineNumber++;
+					line = br.readLine();
 				}
+				lineNumber--;
+				System.out.print("\rProcessing line " + lineNumber + " of " + totalLines + ". Finished!");
 			} catch (Exception e) {
 				System.err.println(
 						e.getMessage() + "\n Linha do erro: " + lineNumber + "\nExpressão do erro: " + e.getMessage());
@@ -73,6 +82,7 @@ public class Main {
 				br.close();
 			}
 			fw.write("endDocument");
+			fw.close();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -86,10 +96,11 @@ public class Main {
 	private void processAgents(ConfigurationFileReader config, FileWriter fw, String line)
 			throws InvalidExpression, IOException {
 		Map<String, Expression> tokens = config.getDefinitions().getTokens();
-		for (String ag : agents) {
-			if (!agents.contains(tokens.get(ag).parse(tokens, line))) {
-				agents.add(ag);
-				fw.write("agent(\"" + ag + "\")\n");
+		for (String ag : config.getDefinitions().getAgents()) {
+			String agent = tokens.get(ag).parse(tokens, line);
+			if (!agents.contains(agent)) {
+				agents.add(agent);
+				fw.write("agent(\"" + agent + "\")\n");
 			}
 		}
 	}
@@ -97,23 +108,29 @@ public class Main {
 	private void processActivities(ConfigurationFileReader config, FileWriter fw, String line)
 			throws InvalidExpression, IOException {
 		Map<String, Expression> tokens = config.getDefinitions().getTokens();
-		for (String ac : activities) {
-			if (!activities.contains(tokens.get(ac).parse(tokens, line))) {
-				activities.add(ac);
-				fw.write("activity(\"" + ac + "\")\n");
+		List<String> newActivities = new ArrayList<>();
+		for (String ac : config.getDefinitions().getActivities()) {
+			String activity = tokens.get(ac).parse(tokens, line);
+			if (!activities.contains(activity)) {
+				activities.add(activity);
+				fw.write("activity(\"" + activity + "\", -, -)\n");
 			}
 		}
+		activities.addAll(newActivities);
 	}
 
 	private void processEntities(ConfigurationFileReader config, FileWriter fw, String line)
 			throws InvalidExpression, IOException {
 		Map<String, Expression> tokens = config.getDefinitions().getTokens();
-		for (String e : entities) {
-			if (!entities.contains(tokens.get(e).parse(tokens, line))) {
-				entities.add(e);
-				fw.write("entity(\"" + e + "\")\n");
+		List<String> newEntities = new ArrayList<>();
+		for (String e : config.getDefinitions().getEntities()) {
+			String entity = tokens.get(e).parse(tokens, line);
+			if (!entities.contains(entity)) {
+				newEntities.add(entity);
+				fw.write("entity(\"" + entity + "\")\n");
 			}
 		}
+		entities.addAll(newEntities);
 	}
 
 	private void processStatements(ConfigurationFileReader config, FileWriter fw, String line)
@@ -125,6 +142,36 @@ public class Main {
 				if (statement.isValid(config.getDefinitions().getTokens(), line)) {
 					fw.write(statement.parse(config.getDefinitions().getTokens(), line) + "\n");
 				}
+			} else if (expr instanceof IfThenElseExpression) {
+				IfThenElseExpression thenElse = (IfThenElseExpression) expr;
+				if (thenElse.getCondition().parse(config.getDefinitions().getTokens(), line).equals(TRUE)) {
+					Expression trueConsequence = thenElse.getTrueConsequence();
+					if (TokenChecker.getInstance().checkStatement(trueConsequence.getStringExpression())) {
+						StatementExpression stmt = new StatementExpression(trueConsequence.getStringExpression());
+						if (stmt.isValid(config.getDefinitions().getTokens(), line)) {
+							fw.write(stmt.parse(config.getDefinitions().getTokens(), line) + "\n");
+						}
+					} else {
+						throw new InvalidExpression(
+								"Statement not specified in the consequences of If-Then-Else expression inside [statements]");
+					}
+				} else {
+					Expression falseConsequence = thenElse.getFalseConsequence();
+					if (falseConsequence != null) {
+						if (TokenChecker.getInstance().checkStatement(falseConsequence.getStringExpression())) {
+							StatementExpression stmt = new StatementExpression(falseConsequence.getStringExpression());
+							if (stmt.isValid(config.getDefinitions().getTokens(), line)) {
+								fw.write(stmt.parse(config.getDefinitions().getTokens(), line) + "\n");
+							}
+						} else {
+							throw new InvalidExpression(
+									"Statement not specified in the consequences of If-Then-Else expression inside [statements]");
+						}
+					}
+				}
+			} else {
+				throw new InvalidExpression(
+						"Statement not specified in the consequences of If-Then-Else expression inside [statements]");
 			}
 		}
 	}

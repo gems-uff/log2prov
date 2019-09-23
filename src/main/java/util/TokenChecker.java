@@ -113,7 +113,7 @@ public class TokenChecker {
 			if (left != null && slices.length > 1) {
 				String[] innerSlice = slices[1].split("\\s*,\\s*");
 				String firstParam = innerSlice[0];
-				String secondParam = innerSlice[1].substring(0, innerSlice[1].indexOf(")"));
+				String secondParam = innerSlice[1].substring(0, innerSlice[1].lastIndexOf(")"));
 				if (!isEmpty(firstParam) && !isEmpty(secondParam)) {
 					return true;
 				}
@@ -143,7 +143,7 @@ public class TokenChecker {
 			if (left != null && slices.length > 1) {
 				String[] innerSlice = slices[1].split("\\s*,\\s*");
 				String firstParam = innerSlice[0];
-				String secondParam = innerSlice[1].substring(0, innerSlice[1].indexOf(")"));
+				String secondParam = innerSlice[1].substring(0, innerSlice[1].lastIndexOf(")"));
 				if (!isEmpty(firstParam) && !isEmpty(secondParam)) {
 					return true;
 				}
@@ -159,7 +159,7 @@ public class TokenChecker {
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
 				String firstParam = innerSlice[0];
-				String secondParam = innerSlice[1].substring(0, innerSlice[1].indexOf(")"));
+				String secondParam = innerSlice[1].substring(0, innerSlice[1].lastIndexOf(")"));
 				if (firstParam != null && secondParam != null) {
 					return true;
 				}
@@ -190,7 +190,7 @@ public class TokenChecker {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				if (innerSlice.length == 2 && innerSlice[0] != null && innerSlice[1] != null) {
+				if (innerSlice.length >= 2 && innerSlice[0] != null && innerSlice[1] != null) {
 					return true;
 				}
 			}
@@ -204,7 +204,7 @@ public class TokenChecker {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				if (innerSlice.length == 2 && innerSlice[0] != null && innerSlice[1] != null) {
+				if (innerSlice.length >= 2 && innerSlice[0] != null && innerSlice[1] != null) {
 					return true;
 				}
 			}
@@ -218,7 +218,7 @@ public class TokenChecker {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				if (innerSlice.length == 2 && innerSlice[0] != null && innerSlice[1] != null) {
+				if (innerSlice.length >= 2 && innerSlice[0] != null && innerSlice[1] != null) {
 					return true;
 				}
 			}
@@ -232,7 +232,7 @@ public class TokenChecker {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				if (innerSlice.length == 2 && innerSlice[0] != null && innerSlice[1] != null) {
+				if (innerSlice.length >= 2 && innerSlice[0] != null && innerSlice[1] != null) {
 					return true;
 				}
 			}
@@ -246,7 +246,7 @@ public class TokenChecker {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				if (innerSlice.length == 2 && innerSlice[0] != null && innerSlice[1] != null) {
+				if (innerSlice.length >= 2 && innerSlice[0] != null && innerSlice[1] != null) {
 					return true;
 				}
 			}
@@ -260,7 +260,7 @@ public class TokenChecker {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				if (innerSlice.length == 2 && innerSlice[0] != null && innerSlice[1] != null) {
+				if (innerSlice.length >= 2 && innerSlice[0] != null && innerSlice[1] != null) {
 					return true;
 				}
 			}
@@ -274,7 +274,7 @@ public class TokenChecker {
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
-				if (innerSlice.length == 2 && checkAccessVar(innerSlice[0]) && checkAccessVar(innerSlice[1])) {
+				if (innerSlice.length >= 2 && checkAccessVar(innerSlice[0]) && checkAccessVar(innerSlice[1])) {
 					return true;
 				}
 			}
