@@ -1,7 +1,10 @@
 # log2prov
-Converts any log file to PROV-N
+
+> Converts any log file to PROV-N.
 
 
-IC/UFF
 
-2019.2
+
+**IC/UFF**
+
+**2019.2**
