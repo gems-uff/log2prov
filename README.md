@@ -109,6 +109,10 @@ stringLiteral := ".*"
 literal       := $identifier | stringLiteral | numberLiteral
 ```
 
+*$identifier points to the content defined inside the identifier.*
+
+*$line points to the content of the current line being processed.*
+
 **IC/UFF**
 
 **2019.2**
