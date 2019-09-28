@@ -16,6 +16,12 @@ Options:
 -n namespace [optional]
 ```
 
+Exemple...
+
+```
+java -jar log2prov-v1.0.jar -d etc\sample1.conf -i mylog.log -o myprovlog.provn
+```
 
 **IC/UFF**
+
 **2019.2**
