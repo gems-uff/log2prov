@@ -77,7 +77,7 @@ BooleanExpr   := TestRegexpExpr
                | true 
                | false
 
-TegexpExpr    := testRegexp(literal, regexp)
+TegexpExpr    := testRegexp(stringLiteral, stringLiteral)
 
 ContainsExpr  := stringLiteral.contains(stringLiteral)
 
