@@ -1,39 +1,51 @@
-expressao : expressaoSeEntao | substringCMD | containsCMD | replaceCMD | testCMD | matchCMD |
-            expressaoBooleana | atribuicao | literal | statement | [line] | [tokens] | [agents] | [entities] | [activities]
+expression    := IfThenExpr 
+			   | SubstringExpr 
+			   | ContainsExpr 
+			   | ReplaceExpr 
+			   | TestRegexpExpr 
+			   | MatchExpr 
+               | BooleanExpr 
+			   | AssignExpr 
+			   | StatementExpr 
+			   | StringLiteral
+			   | NumberLiteral
+			   | $identifier   
+              
+IfThenExpr    := BooleanExpr ? expression | expression
+               | BooleanExpr ? expression 
+                
+BooleanExpr   := TestRegexpExpr 
+               | ContainsExpr 
+			   | true 
+			   | false
 
-expressaoSeEntao : (expressaoBooleana ? literal | statement) | 
-                   (expressaoBooleana ? literal | statement : literal | statement) | 
-				   (expressaoBooleana ? literal | statement : expressaoSeEntao)
+TegexpExpr    := testRegexp(literal, regexp)
 
-expressaoBooleana : testCMD | containsCMD | true | false
+ContainsExpr  := stringLiteral.contains(stringLiteral)
 
-atribuicao : var = expressaoSeEntao | literal
-
-replaceCMD = literal.replace(literal, literal) | replaceCMD.replace(literal,literal)
-
-matchCMD = literal.match(literal, regexp) | matchCMD.match(literal,regexp)
-
-substringCMD = literal.substring(numero,numero) | substringCMD.substring(numero,numero)
-
-containsCMD = literal.contains(literal)
-
-testCMD : testRegexp(literal, regexp)
-
-numero : [0-9]+
-
-literal : var | quoted_string
-
-statement : actedOnBehalfOf($var,$var) | wasAttributedTo($var,$var) | wasDerivedFrom($var,$var) | wasGeneratedBy($var,$var) | used($var,$var) | wasAssociatedWith($var,$var)
-
-var : [A-Za-z][A-Za-z0-9]*
-regexp : ^((?:(?:[^?+*{}()[\]\\|]+|\\.|\[(?:\^?\\.|\^[^\\]|[^\\^])(?:[^\]\\]+|\\.)*\]|\((?:\?[:=!]|\?<[=!]|\?>)?(?1)??\)|\(\?(?:R|[+-]?\d+)\))(?:(?:[?+*]|\{\d+(?:,\d*)?\})[?+]?)?|\|)*)$
-
-
-
-
-
-
-
-
+AssignExpr    := identifier = expression
+              
+ReplaceExpr   := stringLiteral.replace(stringLiteral, stringLiteral) 
+               | ReplaceExpr.replace(stringLiteral, stringLiteral)
+              
+MatchExpr     := stringLiteral.match(stringLiteral) 
+               | MatchExpr.match(stringLiteral)
+			   
+SubstringExpr := stringLiteral.substring(numberLiteral, numberLiteral) 
+               | SubstringExpr.substring(numberLiteral, numberLiteral)
 
 
+StatementExpr := actedOnBehalfOf($identifier, $identifier) 
+               | wasAttributedTo($identifier, $identifier) 
+			   | wasDerivedFrom($identifier, $identifier) 
+			   | wasGeneratedBy($identifier, $identifier) 
+			   | used($identifier, $identifier) 
+			   | wasAssociatedWith($identifier, $identifier)
+
+identifier    := [A-Za-z][A-Za-z0-9]*
+
+numberLiteral := [0-9]+
+              
+stringLiteral := ".*"
+
+literal       := $identifier | stringLiteral | numberLiteral
