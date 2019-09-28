@@ -92,7 +92,6 @@ MatchExpr     := stringLiteral.match(stringLiteral)
 SubstringExpr := stringLiteral.substring(numberLiteral, numberLiteral) 
                | SubstringExpr.substring(numberLiteral, numberLiteral)
 
-
 StatementExpr := actedOnBehalfOf($identifier, $identifier) 
                | wasAttributedTo($identifier, $identifier) 
                | wasDerivedFrom($identifier, $identifier) 
