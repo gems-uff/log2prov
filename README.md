@@ -69,7 +69,7 @@ expression    := IfThenExpr
                | NumberLiteral
                | $identifier   
               
-IfThenExpr    := BooleanExpr ? expression | expression
+IfThenExpr    := BooleanExpr ? expression : expression
                | BooleanExpr ? expression 
                 
 BooleanExpr   := TestRegexpExpr 
