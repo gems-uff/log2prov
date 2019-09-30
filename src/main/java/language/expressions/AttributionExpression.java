@@ -3,7 +3,7 @@ package language.expressions;
 import java.util.Map;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class AttributionExpression extends Expression {
 
@@ -16,7 +16,7 @@ public class AttributionExpression extends Expression {
 
 	public AttributionExpression(String expr) throws InvalidExpression {
 		super(expr);
-		if (!TokenChecker.getInstance().checkAttribution(expr)) {
+		if (!TokenUtil.getInstance().checkAttribution(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

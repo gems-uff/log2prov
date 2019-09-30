@@ -1,6 +1,5 @@
 package readers;
 
-import static language.expressions.ExpressionInterface.ATTRIBUTION;
 import static language.expressions.ExpressionInterface.BOOLEAN;
 import static language.expressions.ExpressionInterface.HEADER_ACTIVITIES;
 import static language.expressions.ExpressionInterface.HEADER_AGENTS;
@@ -20,9 +19,9 @@ import language.LanguageDefinitions;
 import language.expressions.AttributionExpression;
 import language.expressions.Expression;
 import language.expressions.IfThenElseExpression;
+import language.expressions.SetExpression;
 import language.expressions.StatementExpression;
-import language.expressions.VarSetExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class ConfigurationFileReader {
 
@@ -86,9 +85,9 @@ public class ConfigurationFileReader {
 	private void processHeaderStatementsContent(String line) throws InvalidExpression {
 		if (line != null && line.length() > 0) {
 			Expression expr = null;
-			if (TokenChecker.getInstance().checkIfThenElse(line)) {
+			if (TokenUtil.getInstance().checkIfThenElse(line)) {
 				expr = new IfThenElseExpression(line);
-			} else if (TokenChecker.getInstance().checkStatement(line)) {
+			} else if (TokenUtil.getInstance().checkStatement(line)) {
 				expr = new StatementExpression(line);
 			}
 			if (expr == null) {
@@ -101,7 +100,7 @@ public class ConfigurationFileReader {
 
 	private void processHeaderAgentsContent(String line) throws InvalidExpression {
 		if (line != null && line.length() > 0 && isHeaderAgents) {
-			VarSetExpression expr = new VarSetExpression(line);
+			SetExpression expr = new SetExpression(line);
 			this.definitions.setAgents(expr.getVars());
 			isHeaderAgents = false;
 		}
@@ -109,7 +108,7 @@ public class ConfigurationFileReader {
 
 	private void processHeaderActivitiesContent(String line) throws InvalidExpression {
 		if (line != null && line.length() > 0 && isHeaderActivities) {
-			VarSetExpression expr = new VarSetExpression(line);
+			SetExpression expr = new SetExpression(line);
 			this.definitions.setActivities(expr.getVars());
 			isHeaderActivities = false;
 		}
@@ -117,7 +116,7 @@ public class ConfigurationFileReader {
 
 	private void processHeaderEntitiesContent(String line) throws InvalidExpression {
 		if (line != null && line.length() > 0 && isHeaderEntities) {
-			VarSetExpression expr = new VarSetExpression(line);
+			SetExpression expr = new SetExpression(line);
 			this.definitions.setEntities(expr.getVars());
 			isHeaderEntities = false;
 		}
@@ -135,7 +134,7 @@ public class ConfigurationFileReader {
 	private void processHeaderTokenContent(String line) throws InvalidExpression {
 		if (line != null && line.length() > 0) {
 			Expression expr = new Expression(line);
-			if (expr.getType() == ATTRIBUTION) {
+			if (TokenUtil.getInstance().checkAttribution(line)) {
 				AttributionExpression att = new AttributionExpression(line);
 				this.definitions.getTokens().put(att.getVar(), att.getValue());
 			}

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static language.expressions.ExpressionInterface.*;
 import exception.InvalidExpression;
 import language.expressions.Expression;
 import language.expressions.IfThenElseExpression;
@@ -19,7 +20,7 @@ import language.expressions.StatementExpression;
 import language.expressions.StringExpression;
 import readers.ConfigurationFileReader;
 import util.FileUtil;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class Main {
 
@@ -94,10 +95,13 @@ public class Main {
 			throws InvalidExpression, IOException {
 		Map<String, Expression> tokens = config.getDefinitions().getTokens();
 		for (String ag : config.getDefinitions().getAgents()) {
-			String agent = tokens.get(ag).parse(tokens, line);
-			if (!agents.contains(agent)) {
-				agents.add(agent);
-				fw.write("agent(\"" + agent + "\")\n");
+			Expression expr = tokens.get(ag);
+			if (expr != null) {
+				String agent = expr.parse(tokens, line);
+				if (!agents.contains(agent) && !agent.equals(NULL)) {
+					agents.add(agent);
+					fw.write("agent(\"" + agent + "\")\n");
+				}
 			}
 		}
 	}
@@ -107,10 +111,13 @@ public class Main {
 		Map<String, Expression> tokens = config.getDefinitions().getTokens();
 		List<String> newActivities = new ArrayList<>();
 		for (String ac : config.getDefinitions().getActivities()) {
-			String activity = tokens.get(ac).parse(tokens, line);
-			if (!activities.contains(activity)) {
-				activities.add(activity);
-				fw.write("activity(\"" + activity + "\", -, -)\n");
+			Expression expr = tokens.get(ac);
+			if (expr != null) {
+				String activity = expr.parse(tokens, line);
+				if (!activities.contains(activity) && !activity.equals(NULL)) {
+					activities.add(activity);
+					fw.write("activity(\"" + activity + "\", -, -)\n");
+				}
 			}
 		}
 		activities.addAll(newActivities);
@@ -121,10 +128,16 @@ public class Main {
 		Map<String, Expression> tokens = config.getDefinitions().getTokens();
 		List<String> newEntities = new ArrayList<>();
 		for (String e : config.getDefinitions().getEntities()) {
-			String entity = tokens.get(e).parse(tokens, line);
-			if (!entities.contains(entity)) {
-				newEntities.add(entity);
-				fw.write("entity(\"" + entity + "\")\n");
+			if (line.startsWith("07:14:25,610 ERROR")) {
+				System.out.println("Interessa!");
+			}
+			Expression expr = tokens.get(e);
+			if (expr != null) {
+				String entity = expr.parse(tokens, line);
+				if (!entities.contains(entity) && !entity.equals(NULL)) {
+					newEntities.add(entity);
+					fw.write("entity(\"" + entity + "\")\n");
+				}
 			}
 		}
 		entities.addAll(newEntities);
@@ -143,7 +156,7 @@ public class Main {
 				IfThenElseExpression thenElse = (IfThenElseExpression) expr;
 				if (thenElse.getCondition().parse(config.getDefinitions().getTokens(), line).equals(TRUE)) {
 					Expression trueConsequence = thenElse.getTrueConsequence();
-					if (TokenChecker.getInstance().checkStatement(trueConsequence.getStringExpression())) {
+					if (TokenUtil.getInstance().checkStatement(trueConsequence.getStringExpression())) {
 						StatementExpression stmt = new StatementExpression(trueConsequence.getStringExpression());
 						if (stmt.isValid(config.getDefinitions().getTokens(), line)) {
 							fw.write(stmt.parse(config.getDefinitions().getTokens(), line) + "\n");
@@ -155,7 +168,7 @@ public class Main {
 				} else {
 					Expression falseConsequence = thenElse.getFalseConsequence();
 					if (falseConsequence != null) {
-						if (TokenChecker.getInstance().checkStatement(falseConsequence.getStringExpression())) {
+						if (TokenUtil.getInstance().checkStatement(falseConsequence.getStringExpression())) {
 							StatementExpression stmt = new StatementExpression(falseConsequence.getStringExpression());
 							if (stmt.isValid(config.getDefinitions().getTokens(), line)) {
 								fw.write(stmt.parse(config.getDefinitions().getTokens(), line) + "\n");

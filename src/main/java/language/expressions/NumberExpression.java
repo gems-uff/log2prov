@@ -3,13 +3,13 @@ package language.expressions;
 import java.util.Map;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class NumberExpression extends Expression {
 
 	public NumberExpression(String expression) throws InvalidExpression {
 		super(expression);
-		if (!TokenChecker.getInstance().checkNumber(expression)) {
+		if (!TokenUtil.getInstance().checkNumber(expression)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

@@ -5,18 +5,18 @@ import java.util.List;
 import java.util.Map;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
-public class VarSetExpression extends Expression {
+public class SetExpression extends Expression {
 
 	private List<Expression> expressions;
 	private List<String> vars;
 
-	public VarSetExpression(String expr) throws InvalidExpression {
+	public SetExpression(String expr) throws InvalidExpression {
 		super(expr);
 		this.expressions = new ArrayList<Expression>();
 		this.vars = new ArrayList<>();
-		if (TokenChecker.getInstance().checkVarSet(expr)) {
+		if (TokenUtil.getInstance().checkSetExpression(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

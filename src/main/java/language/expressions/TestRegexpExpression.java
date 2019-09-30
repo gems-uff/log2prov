@@ -5,13 +5,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class TestRegexpExpression extends Expression {
 
 	public TestRegexpExpression(String expr) throws InvalidExpression {
 		super(expr);
-		if (!TokenChecker.getInstance().checkTestRegexp(expr)) {
+		if (!TokenUtil.getInstance().checkTestRegexp(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

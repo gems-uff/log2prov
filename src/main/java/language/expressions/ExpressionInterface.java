@@ -12,6 +12,7 @@ public interface ExpressionInterface {
 	public static final Pattern ATTRIBUTION_PATTERN = Pattern.compile("^\\w+(\\s)*=(\\s)*");
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
+	public static final String NULL = "-";
 	public static final String ELSE_SEPARATOR = ":";
 	public static final String CONDITION_SEPARATOR = "?";
 	public static final int FALSE_TYPE = -2;

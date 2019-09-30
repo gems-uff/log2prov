@@ -6,13 +6,13 @@ import java.util.regex.Pattern;
 
 import exception.InvalidExpression;
 import util.RegexpUtil;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class StatementExpression extends Expression {
 
 	public StatementExpression(String expr) throws InvalidExpression {
 		super(expr);
-		if (!TokenChecker.getInstance().checkStatement(expr)) {
+		if (!TokenUtil.getInstance().checkStatement(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

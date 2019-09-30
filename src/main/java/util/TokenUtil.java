@@ -1,14 +1,28 @@
 package util;
 
-import static language.expressions.ExpressionInterface.*;
+import static language.expressions.ExpressionInterface.CONDITION_SEPARATOR;
+import static language.expressions.ExpressionInterface.ELSE_SEPARATOR;
+import static language.expressions.ExpressionInterface.FALSE;
+import static language.expressions.ExpressionInterface.NUMBER_PATTERN;
+import static language.expressions.ExpressionInterface.TRUE;
+import static language.expressions.ExpressionInterface.VAR_PATTERN;
 
-public class TokenChecker {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-	private static TokenChecker instance;
+public class TokenUtil {
 
-	public static TokenChecker getInstance() {
+	private static final String REGEXP_STRING = "\"(?:[^\"\\\\]|\\\\.)*\"";
+	private static final String CODED_QUESTION_MARK = ">>>>>>>Q<<<<<<<";
+	private static final String CODED_DOUBLE_DOTS_MARK = ">>>>>>>D<<<<<<<";
+	
+	private static TokenUtil instance;
+
+	public static TokenUtil getInstance() {
 		if (instance == null) {
-			instance = new TokenChecker();
+			instance = new TokenUtil();
 		}
 		return instance;
 	}
@@ -16,13 +30,13 @@ public class TokenChecker {
 	public boolean isEmpty(String token) {
 		return token != null && token.length() == 0;
 	}
-	
-	public boolean checkVarSet(String token) {
+
+	public boolean checkSetExpression(String token) {
 		if (token != null && token.contains(",")) {
 			String slices[] = token.split("\\s*,\\s*");
 			boolean allFilled = true;
 			for (int i = 0; i < slices.length; i++) {
-				if (!isEmpty(slices[i]) && slices[i].substring(0,1).equals("$")) {
+				if (!isEmpty(slices[i]) && slices[i].substring(0, 1).equals("$")) {
 					allFilled = false;
 					break;
 				}
@@ -31,7 +45,7 @@ public class TokenChecker {
 		}
 		return false;
 	}
-	
+
 	public boolean checkAccessVar(String token) {
 		return token != null && token.substring(0, 1).equals("$") && checkVar(token.substring(1).replace(")", ""));
 	}
@@ -39,7 +53,7 @@ public class TokenChecker {
 	public boolean checkVar(String token) {
 		return token != null && VAR_PATTERN.matcher(token).find();
 	}
-	
+
 	public boolean checkAttribution(String token) {
 		if (token != null && token.contains("=")) {
 			String[] slices = token.split("\\s*=\\s*");
@@ -53,10 +67,10 @@ public class TokenChecker {
 		}
 		return false;
 	}
-	
+
 	public boolean checkIfThenElse(String token) {
 		if (token != null && token.contains(CONDITION_SEPARATOR)) {
-			String[] slices = token.split("\\s*\\" + CONDITION_SEPARATOR+"\\s*");
+			String[] slices = token.split("\\s*\\" + CONDITION_SEPARATOR + "\\s*");
 			String booleanExpr = slices[0];
 			if (booleanExpr != null && checkBooleanExpression(booleanExpr) && slices[1] != null) {
 				return true;
@@ -64,10 +78,10 @@ public class TokenChecker {
 		}
 		return false;
 	}
-	
+
 	public boolean checkBooleanExpression(String token) {
-		if (token != null && (checkTestRegexp(token)
-				|| checkContains(token) || token.contains(TRUE) || token.contains(FALSE))) {
+		if (token != null
+				&& (checkTestRegexp(token) || checkContains(token) || token.contains(TRUE) || token.contains(FALSE))) {
 			return true;
 		}
 		return false;
@@ -88,7 +102,7 @@ public class TokenChecker {
 		}
 		return false;
 	}
-	
+
 	public boolean checkQuotedString(String token) {
 		return token != null && token.matches("^\\s*\".*\"\\s*$");
 	}
@@ -124,7 +138,7 @@ public class TokenChecker {
 
 	public boolean checkMatch(String token) {
 		if (token != null && token.contains(".match(")) {
-			String[] slices = token.split("\\.match\\("); 
+			String[] slices = token.split("\\.match\\(");
 			String left = slices[0];
 			if (left != null && slices.length > 1) {
 				String firstParam = slices[1].substring(0, slices[1].lastIndexOf(")"));
@@ -175,7 +189,7 @@ public class TokenChecker {
 	public boolean checkFalse(String token) {
 		return token != null && token.equals("true");
 	}
-	
+
 	public boolean checkStatement(String token) {
 		if (token != null && (checkAOB(token) || checkWAT(token) || checkWDF(token) || checkWGB(token)
 				|| checkUSD(token) || checkWAW(token) || checkHMB(token))) {
@@ -280,6 +294,35 @@ public class TokenChecker {
 			}
 		}
 		return false;
+	}
+
+	public String supressReserved(String token) {
+		String result = null;
+		Map<String, String> replacements = new HashMap<>();
+		if (token != null) {
+			Pattern p = Pattern.compile(REGEXP_STRING);
+			Matcher m = p.matcher(token);
+			while (m.find()) {
+				String replacement = token.substring(m.start(), m.end());
+				replacement = replacement.replace(CONDITION_SEPARATOR, CODED_QUESTION_MARK);
+				replacement = replacement.replace(ELSE_SEPARATOR, CODED_DOUBLE_DOTS_MARK);
+				replacements.put(token.substring(m.start(), m.end()), replacement);
+			}
+			result = token;
+			for (String key : replacements.keySet()) {
+				result = result.replace(key, replacements.get(key));
+			}
+		}
+		return result;
+	}
+	
+	public String impressReserved(String token) {
+		String result = null;
+		if (token != null) {
+			result = token.replace(CODED_QUESTION_MARK, CONDITION_SEPARATOR);
+			result = result.replace(CODED_DOUBLE_DOTS_MARK, ELSE_SEPARATOR);
+		}
+		return result;
 	}
 
 }

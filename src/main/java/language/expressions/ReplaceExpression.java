@@ -3,13 +3,13 @@ package language.expressions;
 import java.util.Map;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class ReplaceExpression extends Expression {
 
 	public ReplaceExpression(String expr) throws InvalidExpression {
 		super(expr);
-		if (!TokenChecker.getInstance().checkReplace(expr)) {
+		if (!TokenUtil.getInstance().checkReplace(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

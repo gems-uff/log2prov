@@ -3,7 +3,7 @@ package language.expressions;
 import java.util.Map;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class IfThenElseExpression extends Expression {
 
@@ -13,31 +13,36 @@ public class IfThenElseExpression extends Expression {
 
 	public IfThenElseExpression(String expression) throws InvalidExpression {
 		super(expression);
-		if (!TokenChecker.getInstance().checkIfThenElse(expression)) {
+		if (!TokenUtil.getInstance().checkIfThenElse(expression)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;
 		} else {
-			String[] slices = getStringExpression().split("\\s*\\"+CONDITION_SEPARATOR+"\\s*");
-			condition = new BooleanExpression(slices[0]);
-			String[] thenElse = slices[1].split("\\s*"+ELSE_SEPARATOR+"\\s*");
+			String[] slices = TokenUtil.getInstance().supressReserved(getStringExpression())
+					.split("\\s*\\" + CONDITION_SEPARATOR + "\\s*");
+			condition = new BooleanExpression(TokenUtil.getInstance().impressReserved(slices[0]));
+			String[] thenElse = slices[1].split("\\s*" + ELSE_SEPARATOR + "\\s*");
 			String then = thenElse[0];
-			trueConsequence = new Expression(then);
+			trueConsequence = new Expression(TokenUtil.getInstance().impressReserved(then));
 			String elze = null;
 			if (thenElse.length == 2) {
 				elze = thenElse[1];
-				falseConsequence = new Expression(elze);
+				falseConsequence = new Expression(TokenUtil.getInstance().impressReserved(elze));
 			}
 		}
 	}
 
 	@Override
 	public String parse(Map<String, Expression> tokens, String line) throws InvalidExpression {
-		String result = ""; 
+		String result = "";
 		if (condition.parse(tokens, line).equals(TRUE)) {
-			result = trueConsequence.parse(tokens, line );
+			result = trueConsequence.parse(tokens, line);
 		} else if (condition.parse(tokens, line).equals(FALSE)) {
-			result = falseConsequence.parse(tokens, line);
+			if (falseConsequence != null) {
+				result = falseConsequence.parse(tokens, line);
+			} else {
+				result = NULL;
+			}
 		} else {
 			throw new InvalidExpression("Expressão booleana retornando valor diferente de true ou false!");
 		}

@@ -39,10 +39,10 @@ class ConfigurationLogReaderTest {
 			assertEquals("\"commOut\"", logReader.getDefinitions().getTokens().get("commOut").getStringExpression());
 			assertEquals("\"cpu\"", logReader.getDefinitions().getTokens().get("cpu").getStringExpression());
 
-			assertEquals(7, logReader.getDefinitions().getStatements().size());
+			assertEquals(9, logReader.getDefinitions().getStatements().size());
 			assertEquals(3, logReader.getDefinitions().getAgents().size());
 			assertEquals(6, logReader.getDefinitions().getActivities().size());
-			assertEquals(1, logReader.getDefinitions().getEntities().size());
+			assertEquals(3, logReader.getDefinitions().getEntities().size());
 		} catch (URISyntaxException e) {
 			fail(e.getMessage());
 		} catch (IOException e) {

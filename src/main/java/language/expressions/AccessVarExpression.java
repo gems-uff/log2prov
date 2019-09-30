@@ -3,13 +3,13 @@ package language.expressions;
 import java.util.Map;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class AccessVarExpression extends Expression {
 
 	public AccessVarExpression(String expr) throws InvalidExpression {
 		super(expr);
-		if (!TokenChecker.getInstance().checkAccessVar(expr)) {
+		if (!TokenUtil.getInstance().checkAccessVar(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

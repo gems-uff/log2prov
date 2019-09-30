@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class Expression implements ExpressionInterface {
 
@@ -61,40 +61,40 @@ public class Expression implements ExpressionInterface {
 			if (token.contains("[statements]")) {
 				return HEADER_STATEMENTS;
 			}
-			if (TokenChecker.getInstance().checkIfThenElse(token)) {
+			if (TokenUtil.getInstance().checkIfThenElse(token)) {
 				return IF_THEN_ELSE;
 			}
-			if (TokenChecker.getInstance().checkAttribution(token)) {
+			if (TokenUtil.getInstance().checkAttribution(token)) {
 				return ATTRIBUTION;
 			}
-			if (TokenChecker.getInstance().checkBooleanExpression(token)) {
+			if (TokenUtil.getInstance().checkBooleanExpression(token)) {
 				return BOOLEAN;
 			}
-			if (TokenChecker.getInstance().checkNumber(token)) {
+			if (TokenUtil.getInstance().checkNumber(token)) {
 				return NUMBER;
 			}
-			if (TokenChecker.getInstance().checkQuotedString(token)) {
+			if (TokenUtil.getInstance().checkQuotedString(token)) {
 				return QUOTED_STRING;
 			}
-			if (TokenChecker.getInstance().checkSubstring(token)) {
+			if (TokenUtil.getInstance().checkSubstring(token)) {
 				return SUBSTRING;
 			}
-			if (TokenChecker.getInstance().checkReplace(token)) {
+			if (TokenUtil.getInstance().checkReplace(token)) {
 				return REPLACE;
 			}
-			if (TokenChecker.getInstance().checkMatch(token)) {
+			if (TokenUtil.getInstance().checkMatch(token)) {
 				return MATCH;
 			}
-			if (TokenChecker.getInstance().checkStatement(token)) {
+			if (TokenUtil.getInstance().checkStatement(token)) {
 				return STATEMENT;
 			}
-			if (TokenChecker.getInstance().checkVarSet(token)) {
+			if (TokenUtil.getInstance().checkSetExpression(token)) {
 				return VAR_SET;
 			}
-			if (TokenChecker.getInstance().checkVar(token)) {
+			if (TokenUtil.getInstance().checkVar(token)) {
 				return VAR;
 			}
-			if (TokenChecker.getInstance().checkAccessVar(token)) {
+			if (TokenUtil.getInstance().checkAccessVar(token)) {
 				return ACCESS_VAR;
 			}
 		}
@@ -151,7 +151,7 @@ public class Expression implements ExpressionInterface {
 			break;
 		}
 		case VAR_SET: {
-			result = new VarSetExpression(this.expr).parse(tokens, line);
+			result = new SetExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case NUMBER: {

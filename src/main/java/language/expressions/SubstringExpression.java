@@ -3,13 +3,13 @@ package language.expressions;
 import java.util.Map;
 
 import exception.InvalidExpression;
-import util.TokenChecker;
+import util.TokenUtil;
 
 public class SubstringExpression extends Expression {
 
 	public SubstringExpression(String expr) throws InvalidExpression {
 		super(expr);
-		if (TokenChecker.getInstance().checkSubstring(expr)) {
+		if (TokenUtil.getInstance().checkSubstring(expr)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;
