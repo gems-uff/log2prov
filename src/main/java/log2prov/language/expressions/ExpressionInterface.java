@@ -16,6 +16,8 @@ public interface ExpressionInterface {
 	public static final String ELSE_SEPARATOR = ":";
 	public static final String CONCAT_SEPARATOR = "+";
 	public static final String VAR_SEPARATOR = ",";
+	public static final String AND_SEPARATOR = "&&";
+	public static final String OR_SEPARATOR = "||";
 	public static final String CONDITION_SEPARATOR = "?";
 	public static final int FALSE_TYPE = -2;
 	public static final int TRUE_TYPE = -1;

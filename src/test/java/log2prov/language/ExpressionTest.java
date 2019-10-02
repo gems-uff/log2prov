@@ -189,5 +189,47 @@ class ExpressionTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	void testAndExpression() {
+		String line = "06:32:17,262 INFO  [br.mil.mar.dsm.sinais.dao.LogEventoDAOImpl] (default task-104) - [CONEXAO-ID]: 5112990. [EVENTO]: 051700. [IS]: 513648. [OPERAÇÃO]: Registro da impressão do TIS para a inspecao - 513648 efetuado."; 
+		String expr = "testRegexp($line, \"\\[CONEXAO-ID\\]: \\d*\\.\") && false ? \"CON\" + $line.match(\"\\[CONEXAO-ID\\]: \\d*\\.\").replace(\"[CONEXAO-ID]: \",\"\").replace(\".\",\"\") : \"deu ruim!\"";
+		Map<String, Expression> tokens = new HashMap<String, Expression>();
+		tokens.put("line", new StringExpression(line));
+		try {
+			assertEquals("deu ruim!", new Expression(expr).parse(tokens, line));
+		} catch (InvalidExpression e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	void testAndExpression2() {
+		String line = "06:32:17,262 INFO  [br.mil.mar.dsm.sinais.dao.LogEventoDAOImpl] (default task-104) - [CONEXAO-ID]: 5112990. [EVENTO]: 051700. [IS]: 513648. [OPERAÇÃO]: Registro da impressão do TIS para a inspecao - 513648 efetuado."; 
+		String expr = "testRegexp($line, \"\\[CONEXAO-ID\\]: \\d*\\.\") && true ? \"CON\" + $line.match(\"\\[CONEXAO-ID\\]: \\d*\\.\").replace(\"[CONEXAO-ID]: \",\"\").replace(\".\",\"\") : \"deu ruim!\"";
+		Map<String, Expression> tokens = new HashMap<String, Expression>();
+		tokens.put("line", new StringExpression(line));
+		try {
+			assertEquals("CON5112990", new Expression(expr).parse(tokens, line));
+		} catch (InvalidExpression e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	void testOrExpression() {
+		String expr = "false || false ? \"deu true!\" : \"deu false!\"";
+		try {
+			assertEquals("deu false!", new Expression(expr).parse(null, null));
+			expr = "true || false ? \"deu true!\" : \"deu false!\"";
+			assertEquals("deu true!", new Expression(expr).parse(null, null));
+			expr = "false || true ? \"deu true!\" : \"deu false!\"";
+			assertEquals("deu true!", new Expression(expr).parse(null, null));
+			expr = "true || true ? \"deu true!\" : \"deu false!\"";
+			assertEquals("deu true!", new Expression(expr).parse(null, null));
+		} catch (InvalidExpression e) {
+			fail(e.getMessage());
+		}
+	}
 
 }

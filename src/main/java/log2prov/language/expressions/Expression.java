@@ -51,6 +51,9 @@ public class Expression implements ExpressionInterface {
 			if (TokenUtil.getInstance().checkStatementsHeader(token)) {
 				return HEADER_STATEMENTS;
 			}
+			if (TokenUtil.getInstance().checkQuotedString(token)) {
+				return QUOTED_STRING;
+			}
 			if (TokenUtil.getInstance().checkAttribution(token)) {
 				return ATTRIBUTION;
 			}
@@ -65,9 +68,6 @@ public class Expression implements ExpressionInterface {
 			}
 			if (TokenUtil.getInstance().checkNumber(token)) {
 				return NUMBER;
-			}
-			if (TokenUtil.getInstance().checkQuotedString(token)) {
-				return QUOTED_STRING;
 			}
 			if (TokenUtil.getInstance().checkSubstring(token)) {
 				return SUBSTRING;

@@ -4,6 +4,8 @@ import static log2prov.language.expressions.ExpressionInterface.CONDITION_SEPARA
 import static log2prov.language.expressions.ExpressionInterface.ELSE_SEPARATOR;
 import static log2prov.language.expressions.ExpressionInterface.CONCAT_SEPARATOR;
 import static log2prov.language.expressions.ExpressionInterface.VAR_SEPARATOR;
+import static log2prov.language.expressions.ExpressionInterface.AND_SEPARATOR;
+import static log2prov.language.expressions.ExpressionInterface.OR_SEPARATOR;
 import static log2prov.language.expressions.ExpressionInterface.FALSE;
 import static log2prov.language.expressions.ExpressionInterface.NUMBER_PATTERN;
 import static log2prov.language.expressions.ExpressionInterface.TRUE;
@@ -20,6 +22,10 @@ public class TokenUtil {
 	private static final String CODED_QUESTION_MARK = ">>>>>>>Q<<<<<<<";
 	private static final String CODED_COLON_MARK = ">>>>>>>C<<<<<<<";
 	private static final String CODED_COMMA_MARK = ">>>>>>>O<<<<<<<";
+	private static final String CODED_AND_MARK = ">>>>>>>AND<<<<<<<";
+	private static final String CODED_OR_MARK = ">>>>>>>OR<<<<<<<";
+	private static final String CODED_TRUE_MARK = ">>>>>>>T<<<<<<<";
+	private static final String CODED_FALSE_MARK = ">>>>>>>F<<<<<<<";
 	private static final String CODED_CONCAT_MARK = ">>>>>>>P<<<<<<<";
 
 	private static TokenUtil instance;
@@ -85,6 +91,40 @@ public class TokenUtil {
 		return false;
 	}
 
+	public boolean checkAndExpression(String token) {
+		if (token != null && supressReserved(token).contains("&&")) {
+			String[] slices = supressReserved(token).split("\\s*&&\\s*");
+			for (int i = 0; i < slices.length; i++) {
+				if (isEmpty(slices[i])) {
+					return false;
+				} else {
+					if (!TokenUtil.getInstance().checkBooleanExpression(slices[i])) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean checkOrExpression(String token) {
+		if (token != null && supressReserved(token).contains("||")) {
+			String[] slices = supressReserved(token).split("\\s*\\|\\|\\s*");
+			for (int i = 0; i < slices.length; i++) {
+				if (isEmpty(slices[i])) {
+					return false;
+				} else {
+					if (!TokenUtil.getInstance().checkBooleanExpression(slices[i])) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public boolean checkIfThenElse(String token) {
 		if (token != null && token.contains(CONDITION_SEPARATOR)) {
 			String[] slices = token.split("\\s*\\" + CONDITION_SEPARATOR + "\\s*");
@@ -97,8 +137,8 @@ public class TokenUtil {
 	}
 
 	public boolean checkBooleanExpression(String token) {
-		if (token != null
-				&& (checkTestRegexp(token) || checkContains(token) || token.contains(TRUE) || token.contains(FALSE))) {
+		if (token != null && (checkTestRegexp(token) || checkContains(token) || checkAndExpression(token)
+				|| checkOrExpression(token) || token.contains(TRUE) || token.contains(FALSE))) {
 			return true;
 		}
 		return false;
@@ -203,7 +243,7 @@ public class TokenUtil {
 	}
 
 	public boolean checkFalse(String token) {
-		return token != null && token.equals("true");
+		return token != null && token.equals("false");
 	}
 
 	public boolean checkStatement(String token) {
@@ -322,7 +362,11 @@ public class TokenUtil {
 				String replacement = token.substring(m.start(), m.end());
 				replacement = replacement.replace(CONDITION_SEPARATOR, CODED_QUESTION_MARK);
 				replacement = replacement.replace(ELSE_SEPARATOR, CODED_COLON_MARK);
+				replacement = replacement.replace(AND_SEPARATOR, CODED_AND_MARK);
+				replacement = replacement.replace(OR_SEPARATOR, CODED_OR_MARK);
 				replacement = replacement.replace(CONCAT_SEPARATOR, CODED_CONCAT_MARK);
+				replacement = replacement.replace(TRUE, CODED_TRUE_MARK);
+				replacement = replacement.replace(FALSE, CODED_FALSE_MARK);
 				replacement = replacement.replace(VAR_SEPARATOR, CODED_COMMA_MARK);
 				replacements.put(token.substring(m.start(), m.end()), replacement);
 			}
@@ -338,6 +382,10 @@ public class TokenUtil {
 		String result = null;
 		if (token != null) {
 			result = token.replace(CODED_QUESTION_MARK, CONDITION_SEPARATOR);
+			result = result.replace(CODED_AND_MARK, AND_SEPARATOR);
+			result = result.replace(CODED_OR_MARK, OR_SEPARATOR);
+			result = result.replace(CODED_TRUE_MARK, TRUE);
+			result = result.replace(CODED_FALSE_MARK, FALSE);
 			result = result.replace(CODED_COLON_MARK, ELSE_SEPARATOR);
 			result = result.replace(CODED_CONCAT_MARK, CONCAT_SEPARATOR);
 			result = result.replace(CODED_COMMA_MARK, VAR_SEPARATOR);
@@ -365,19 +413,19 @@ public class TokenUtil {
 	public boolean checkLineHeader(String token) {
 		return token != null && token.contains("[line]");
 	}
-	
+
 	public boolean checkAgentsHeader(String token) {
 		return token != null && token.contains("[agents]");
 	}
-	
+
 	public boolean checkActivitiesHeader(String token) {
 		return token != null && token.contains("[activities]");
 	}
-	
+
 	public boolean checkEntitiesHeader(String token) {
 		return token != null && token.contains("[entities]");
 	}
-	
+
 	public boolean checkStatementsHeader(String token) {
 		return token != null && token.contains("[statements]");
 	}

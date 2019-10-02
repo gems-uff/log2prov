@@ -74,11 +74,20 @@ IfThenExpr     := BooleanExpr ? expression : expression
                 | BooleanExpr ? expression 
                  
 BooleanExpr    := TestRegexpExpr 
+                | AndExpr
+                | OrExpr
                 | ContainsExpr 
                 | true 
                 | false
+
+AndExpr        := BooleanExpr && BooleanExpr 
+                | BooleanExpr && AndExpr
+
+OrExpr         := BooleanExpr || BooleanExpr 
+                | BooleanExpr || AndExpr
                 
-ConcatExpr     := stringLiteral + stringLiteral | stringLiteral + ConcatExpr            
+ConcatExpr     := stringLiteral + stringLiteral 
+                | stringLiteral + ConcatExpr            
                
 TestRegexpExpr := testRegexp(stringLiteral, stringLiteral)
                
@@ -106,7 +115,7 @@ identifier     := [A-Za-z][A-Za-z0-9]*
                
 numberLiteral  := [0-9]+
                
-stringLiteral  := ".*"
+stringLiteral  := \"(?:[^\"\\\\]|\\\\.)*\"
                
 literal        := $identifier | stringLiteral | numberLiteral
 ```
