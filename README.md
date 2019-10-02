@@ -19,7 +19,7 @@ Options:
 Exemple...
 
 ```
-java -jar log2prov-v1.0.jar -d etc\sample1.conf -i mylog.log -o myprovlog.provn
+java -jar log2prov-v1.0.jar -d etc\sample.conf -i mylog.log -o myprovlog.provn
 ```
 
 ## CONF File
@@ -28,27 +28,27 @@ java -jar log2prov-v1.0.jar -d etc\sample1.conf -i mylog.log -o myprovlog.provn
 ```
 [line]
 \\ specification of the boolean expression to test if line should be processed of ignored.
-\\ See etc\sample1.conf
+\\ See etc\sample.conf
 
 [tokens]
 \\ specifications of the tokens to be matched in the log file.
-\\ See etc\sample1.conf
+\\ See etc\sample.conf
 
 [agents]
 \\ specifications of the agents to be matched in the log file.
-\\ See etc\sample1.conf
+\\ See etc\sample.conf
 
 [entities]
 \\ specifications of the entities to be matched in the log file.
-\\ See etc\sample1.conf
+\\ See etc\sample.conf
 
 [activities]
 \\ specifications of the activities to be matched in the log file.
-\\ See etc\sample1.conf
+\\ See etc\sample.conf
 
 [statements]
 \\ specifications of the statements to be outputed in output prov-n file.
-\\ See etc\sample1.conf
+\\ See etc\sample.conf
 
 
 
@@ -56,56 +56,59 @@ java -jar log2prov-v1.0.jar -d etc\sample1.conf -i mylog.log -o myprovlog.provn
 
 ### AST
 ```
-expression    := IfThenExpr 
-               | SubstringExpr 
-               | ContainsExpr 
-               | ReplaceExpr 
-               | TestRegexpExpr 
-               | MatchExpr 
-               | BooleanExpr 
-               | AssignExpr 
-               | StatementExpr 
-               | StringLiteral
-               | NumberLiteral
-               | $identifier   
-              
-IfThenExpr    := BooleanExpr ? expression : expression
-               | BooleanExpr ? expression 
+expression     := IfThenExpr
+                | ConcatExpr 
+                | SubstringExpr 
+                | ContainsExpr 
+                | ReplaceExpr 
+                | TestRegexpExpr 
+                | MatchExpr 
+                | BooleanExpr 
+                | AssignExpr 
+                | StatementExpr 
+                | StringLiteral
+                | NumberLiteral
+                | $identifier   
+               
+IfThenExpr     := BooleanExpr ? expression : expression
+                | BooleanExpr ? expression 
+                 
+BooleanExpr    := TestRegexpExpr 
+                | ContainsExpr 
+                | true 
+                | false
                 
-BooleanExpr   := TestRegexpExpr 
-               | ContainsExpr 
-               | true 
-               | false
-
-TegexpExpr    := testRegexp(stringLiteral, stringLiteral)
-
-ContainsExpr  := stringLiteral.contains(stringLiteral)
-
-AssignExpr    := identifier = expression
-              
-ReplaceExpr   := stringLiteral.replace(stringLiteral, stringLiteral) 
-               | ReplaceExpr.replace(stringLiteral, stringLiteral)
-              
-MatchExpr     := stringLiteral.match(stringLiteral) 
-               | MatchExpr.match(stringLiteral)
-			   
-SubstringExpr := stringLiteral.substring(numberLiteral, numberLiteral) 
-               | SubstringExpr.substring(numberLiteral, numberLiteral)
-
-StatementExpr := actedOnBehalfOf($identifier, $identifier) 
-               | wasAttributedTo($identifier, $identifier) 
-               | wasDerivedFrom($identifier, $identifier) 
-               | wasGeneratedBy($identifier, $identifier) 
-               | used($identifier, $identifier) 
-               | wasAssociatedWith($identifier, $identifier)
-
-identifier    := [A-Za-z][A-Za-z0-9]*
-
-numberLiteral := [0-9]+
-              
-stringLiteral := ".*"
-
-literal       := $identifier | stringLiteral | numberLiteral
+ConcatExpr     := stringLiteral + stringLiteral | stringLiteral + ConcatExpr            
+               
+TestRegexpExpr := testRegexp(stringLiteral, stringLiteral)
+               
+ContainsExpr   := stringLiteral.contains(stringLiteral)
+               
+AssignExpr     := identifier = expression
+               
+ReplaceExpr    := stringLiteral.replace(stringLiteral, stringLiteral) 
+                | ReplaceExpr.replace(stringLiteral, stringLiteral)
+               
+MatchExpr      := stringLiteral.match(stringLiteral) 
+                | MatchExpr.match(stringLiteral)
+			    
+SubstringExpr  := stringLiteral.substring(numberLiteral, numberLiteral) 
+                | SubstringExpr.substring(numberLiteral, numberLiteral)
+               
+StatementExpr  := actedOnBehalfOf($identifier, $identifier) 
+                | wasAttributedTo($identifier, $identifier) 
+                | wasDerivedFrom($identifier, $identifier) 
+                | wasGeneratedBy($identifier, $identifier) 
+                | used($identifier, $identifier) 
+                | wasAssociatedWith($identifier, $identifier)
+               
+identifier     := [A-Za-z][A-Za-z0-9]*
+               
+numberLiteral  := [0-9]+
+               
+stringLiteral  := ".*"
+               
+literal        := $identifier | stringLiteral | numberLiteral
 ```
 
 *$identifier points to the content defined inside the identifier.*
