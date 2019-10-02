@@ -14,7 +14,7 @@ class ConfigurationLogReaderTest {
 	@Test
 	void testReadFile() {
 		try {
-			ConfigurationFileReader logReader = new ConfigurationFileReader("etc/analysis1.conf");
+			ConfigurationFileReader logReader = new ConfigurationFileReader("etc/sample.conf");
 			logReader.readFile();
 			assertNotNull(logReader.getDefinitions());
 			
