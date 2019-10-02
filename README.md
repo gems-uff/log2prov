@@ -16,7 +16,7 @@ Options:
 -n namespace [optional]
 ```
 
-Exemple...
+Example...
 
 ```
 java -jar log2prov-v1.0.jar -d etc\sample.conf -i mylog.log -o myprovlog.provn
