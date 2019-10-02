@@ -1,4 +1,4 @@
-package util;
+package log2prov.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +24,16 @@ public class RegexpUtil {
 			}
 		}
 		return result;
+	}
+	
+	public String matchFirst(String line, String regexp) {
+		String match = null;
+		Pattern p = Pattern.compile(regexp);
+		Matcher matcher = p.matcher(line);
+		if (matcher.find()) {
+			match = line.substring(matcher.start(), matcher.end());
+		}
+		return match;
 	}
 
 }

@@ -1,12 +1,4 @@
-package readers;
-
-import static language.expressions.ExpressionInterface.BOOLEAN;
-import static language.expressions.ExpressionInterface.HEADER_ACTIVITIES;
-import static language.expressions.ExpressionInterface.HEADER_AGENTS;
-import static language.expressions.ExpressionInterface.HEADER_ENTITIES;
-import static language.expressions.ExpressionInterface.HEADER_LINE;
-import static language.expressions.ExpressionInterface.HEADER_STATEMENTS;
-import static language.expressions.ExpressionInterface.HEADER_TOKENS;
+package log2prov.readers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,14 +6,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import exception.InvalidExpression;
-import language.LanguageDefinitions;
-import language.expressions.AttributionExpression;
-import language.expressions.Expression;
-import language.expressions.IfThenElseExpression;
-import language.expressions.SetExpression;
-import language.expressions.StatementExpression;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.language.LanguageDefinitions;
+import log2prov.language.expressions.AttributionExpression;
+import log2prov.language.expressions.BooleanExpression;
+import log2prov.language.expressions.Expression;
+import log2prov.language.expressions.IfThenElseExpression;
+import log2prov.language.expressions.SetExpression;
+import log2prov.language.expressions.StatementExpression;
+import log2prov.util.TokenUtil;
 
 public class ConfigurationFileReader {
 
@@ -122,10 +115,9 @@ public class ConfigurationFileReader {
 		}
 	}
 
-	private void processHeaderLineContent(String line) {
-		Expression expr = new Expression(line);
-		if (expr.getType() == BOOLEAN) {
-			this.definitions.setLineTest(expr);
+	private void processHeaderLineContent(String line) throws InvalidExpression {
+		if (TokenUtil.getInstance().checkBooleanExpression(line)) {
+			this.definitions.setLineTest(new BooleanExpression(line));
 		}
 		isHeaderLine = false;
 
@@ -144,35 +136,18 @@ public class ConfigurationFileReader {
 	}
 
 	public void processLine(String line) {
-		Expression expr = new Expression(line);
-		int type = expr.getType();
-		switch (type) {
-		case HEADER_LINE: {
+		if (TokenUtil.getInstance().checkLineHeader(line)) {
 			isHeaderLine = true;
-			break;
-		}
-		case HEADER_TOKENS: {
+		} else if (TokenUtil.getInstance().checkTokensHeader(line)) {
 			isHeaderToken = true;
-			break;
-		}
-		case HEADER_STATEMENTS: {
+		} else if (TokenUtil.getInstance().checkStatementsHeader(line)) {
 			isHeaderStatements = true;
-			break;
-		}
-		case HEADER_AGENTS: {
+		} else if (TokenUtil.getInstance().checkAgentsHeader(line)) {
 			isHeaderAgents = true;
-			break;
-		}
-		case HEADER_ACTIVITIES: {
+		} else if (TokenUtil.getInstance().checkActivitiesHeader(line)) {
 			isHeaderActivities = true;
-			break;
-		}
-		case HEADER_ENTITIES: {
+		} else if (TokenUtil.getInstance().checkEntitiesHeader(line)) {
 			isHeaderEntities = true;
-			break;
-		}
-		default:
-			break;
 		}
 	}
 

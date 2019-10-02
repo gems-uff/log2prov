@@ -1,14 +1,15 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 
-import exception.InvalidExpression;
+import log2prov.exception.InvalidExpression;
+import log2prov.util.TokenUtil;
 
 public class QuotedStringExpression extends Expression {
 
 	public QuotedStringExpression(String expression) throws InvalidExpression {
 		super(expression);
-		if (getType() != QUOTED_STRING) {
+		if (!TokenUtil.getInstance().checkQuotedString(expression)) {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;

@@ -1,4 +1,4 @@
-package exception;
+package log2prov.exception;
 
 public class InvalidExpression extends Exception {
 

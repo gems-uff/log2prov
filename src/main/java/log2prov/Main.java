@@ -1,6 +1,6 @@
 package log2prov;
 
-import static language.expressions.ExpressionInterface.TRUE;
+import static log2prov.language.expressions.ExpressionInterface.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,15 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static language.expressions.ExpressionInterface.*;
-import exception.InvalidExpression;
-import language.expressions.Expression;
-import language.expressions.IfThenElseExpression;
-import language.expressions.StatementExpression;
-import language.expressions.StringExpression;
-import readers.ConfigurationFileReader;
-import util.FileUtil;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.language.expressions.Expression;
+import log2prov.language.expressions.IfThenElseExpression;
+import log2prov.language.expressions.StatementExpression;
+import log2prov.language.expressions.StringExpression;
+import log2prov.readers.ConfigurationFileReader;
+import log2prov.util.FileUtil;
+import log2prov.util.TokenUtil;
 
 public class Main {
 
@@ -100,7 +99,8 @@ public class Main {
 				String agent = expr.parse(tokens, line);
 				if (!agents.contains(agent) && !agent.equals(NULL)) {
 					agents.add(agent);
-					fw.write("agent(\"" + agent + "\")\n");
+					agent = TokenUtil.getInstance().impressEscaped(agent);
+					fw.write("agent(" + agent + ")\n");
 				}
 			}
 		}
@@ -116,7 +116,8 @@ public class Main {
 				String activity = expr.parse(tokens, line);
 				if (!activities.contains(activity) && !activity.equals(NULL)) {
 					activities.add(activity);
-					fw.write("activity(\"" + activity + "\", -, -)\n");
+					activity = TokenUtil.getInstance().impressEscaped(activity);
+					fw.write("activity(" + activity + ", -, -)\n");
 				}
 			}
 		}
@@ -128,15 +129,13 @@ public class Main {
 		Map<String, Expression> tokens = config.getDefinitions().getTokens();
 		List<String> newEntities = new ArrayList<>();
 		for (String e : config.getDefinitions().getEntities()) {
-			if (line.startsWith("07:14:25,610 ERROR")) {
-				System.out.println("Interessa!");
-			}
 			Expression expr = tokens.get(e);
 			if (expr != null) {
 				String entity = expr.parse(tokens, line);
 				if (!entities.contains(entity) && !entity.equals(NULL)) {
 					newEntities.add(entity);
-					fw.write("entity(\"" + entity + "\")\n");
+					entity = TokenUtil.getInstance().impressEscaped(entity);
+					fw.write("entity(" + entity + ")\n");
 				}
 			}
 		}
@@ -204,15 +203,21 @@ public class Main {
 			System.out.println("-p namespace prefix [optional]");
 			System.out.println("-n namespace [optional]");
 		} else if (args.length >= 6 && args.length <= 10) {
-			if (args.length == 8) {
-				if (args[6].equals("-p")) {
+			if (args.length > 6) {
+				if (args.length >= 8 && args[6].equals("-p")) {
 					log2Prov.setNamespacePrefix(args[7]);
+				} else if (args.length >= 9 && args[7].equals("-p")) {
+					log2Prov.setNamespacePrefix(args[8]);
+				} else if (args.length >= 10 && args[8].equals("-p")) {
+					log2Prov.setNamespacePrefix(args[9]);
 				}
-				if (args[8].equals("-n")) {
+				if (args.length >= 8 && args[6].equals("-n")) {
+					log2Prov.setNamespace(args[7]);
+				} else if (args.length >= 9 && args[7].equals("-n")) {
+					log2Prov.setNamespace(args[8]);
+				} else if (args.length >= 10 && args[8].equals("-n")) {
 					log2Prov.setNamespace(args[9]);
 				}
-			} else if (args.length == 7) {
-
 			}
 			if (args[0].equals("-d")) {
 				definitionsFile = args[1];

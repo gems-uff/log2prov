@@ -1,11 +1,9 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import exception.InvalidExpression;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.util.TokenUtil;
 
 public class Expression implements ExpressionInterface {
 
@@ -20,20 +18,12 @@ public class Expression implements ExpressionInterface {
 		this.expr = expr;
 	}
 
-	public String matchFirst(String line, String regexp) {
-		String match = null;
-		Pattern p = Pattern.compile(regexp);
-		Matcher matcher = p.matcher(line);
-		if (matcher.find()) {
-			match = line.substring(matcher.start(), matcher.end());
-		}
-		return match;
-	}
-
 	public boolean isEndHeaderToken(String token) {
-		return !(getType(token) == HEADER_STATEMENTS || getType(token) == HEADER_TOKENS
-				|| getType(token) == HEADER_AGENTS || getType(token) == HEADER_ACTIVITIES
-				|| getType(token) == HEADER_ENTITIES);
+		return !(TokenUtil.getInstance().checkStatementsHeader(token) 
+				|| TokenUtil.getInstance().checkTokensHeader(token)
+				|| TokenUtil.getInstance().checkAgentsHeader(token) 
+				|| TokenUtil.getInstance().checkActivitiesHeader(token)
+				|| TokenUtil.getInstance().checkEntitiesHeader(token));
 	}
 
 	public int getType() {
@@ -43,29 +33,32 @@ public class Expression implements ExpressionInterface {
 	protected int getType(String token) {
 		int type = EMPTY;
 		if (token != null && token.length() > 0) {
-			if (token.contains("[line]")) {
+			if (TokenUtil.getInstance().checkLineHeader(token)) {
 				return HEADER_LINE;
 			}
-			if (token.contains("[tokens]")) {
+			if (TokenUtil.getInstance().checkTokensHeader(token)) {
 				return HEADER_TOKENS;
 			}
-			if (token.contains("[agents]")) {
+			if (TokenUtil.getInstance().checkAgentsHeader(token)) {
 				return HEADER_AGENTS;
 			}
-			if (token.contains("[entities]")) {
+			if (TokenUtil.getInstance().checkEntitiesHeader(token)) {
 				return HEADER_ENTITIES;
 			}
-			if (token.contains("[activities]")) {
+			if (TokenUtil.getInstance().checkActivitiesHeader(token)) {
 				return HEADER_ACTIVITIES;
 			}
-			if (token.contains("[statements]")) {
+			if (TokenUtil.getInstance().checkStatementsHeader(token)) {
 				return HEADER_STATEMENTS;
+			}
+			if (TokenUtil.getInstance().checkAttribution(token)) {
+				return ATTRIBUTION;
 			}
 			if (TokenUtil.getInstance().checkIfThenElse(token)) {
 				return IF_THEN_ELSE;
 			}
-			if (TokenUtil.getInstance().checkAttribution(token)) {
-				return ATTRIBUTION;
+			if (TokenUtil.getInstance().checkConcatenation(token)) {
+				return CONCATENATION;
 			}
 			if (TokenUtil.getInstance().checkBooleanExpression(token)) {
 				return BOOLEAN;
@@ -132,6 +125,10 @@ public class Expression implements ExpressionInterface {
 		}
 		case BOOLEAN: {
 			result = new BooleanExpression(this.expr).parse(tokens, line);
+			break;
+		}
+		case CONCATENATION: {
+			result = new ConcatExpression(this.expr).parse(tokens, line);
 			break;
 		}
 		case MATCH: {

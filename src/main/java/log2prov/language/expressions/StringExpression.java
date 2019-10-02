@@ -1,8 +1,8 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 
-import exception.InvalidExpression;
+import log2prov.exception.InvalidExpression;
 
 public class StringExpression extends Expression {
 

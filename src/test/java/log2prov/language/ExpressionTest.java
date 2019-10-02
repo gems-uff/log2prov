@@ -1,6 +1,7 @@
-package language;
+package log2prov.language;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +10,10 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import exception.InvalidExpression;
-import language.expressions.BooleanExpression;
-import language.expressions.Expression;
-import language.expressions.StringExpression;
+import log2prov.exception.InvalidExpression;
+import log2prov.language.expressions.BooleanExpression;
+import log2prov.language.expressions.Expression;
+import log2prov.language.expressions.StringExpression;
 
 class ExpressionTest {
 	
@@ -38,9 +39,7 @@ class ExpressionTest {
 		ld.getTokens().put("line", new StringExpression(line));
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
-		for (Expression expression : statements) {
-			assertEquals("hadMember(\"InspecaoAction\", \"br.mil.mar.dsm.sinais.controlador\")",expression.parse(tokens, line));
-		}
+
 	}
 	
 	@Test
@@ -66,7 +65,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("wasAssociatedWith(\"LogEventoDAOImpl\", \"io\")",expression.parse(tokens, line));
+			assertEquals("wasAssociatedWith(LogEventoDAOImpl, io)",expression.parse(tokens, line));
 		}
 	}
 	
@@ -93,7 +92,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("wasAssociatedWith(\"InspecaoAction\", \"io\")",expression.parse(tokens, line));
+			assertEquals("wasAssociatedWith(InspecaoAction, io)",expression.parse(tokens, line));
 		}
 	}
 	
@@ -120,7 +119,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("wasAssociatedWith(\"SampConsumerRS\", \"comm\")",expression.parse(tokens, line));
+			assertEquals("wasAssociatedWith(SampConsumerRS, comm)",expression.parse(tokens, line));
 		}
 	}
 	
@@ -147,7 +146,7 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("wasAssociatedWith(\"ReportHandlerAction\", \"cpu\")",expression.parse(tokens, line));
+			assertEquals("wasAssociatedWith(ReportHandlerAction, cpu)",expression.parse(tokens, line));
 		}
 	}
 	
@@ -174,7 +173,20 @@ class ExpressionTest {
 		
 		assertEquals("true", new BooleanExpression(lineTest).parse(tokens, line));
 		for (Expression expression : statements) {
-			assertEquals("actedOnBehalfOf(\"LogEventoDAOImpl\", \"usuario\")",expression.parse(tokens, line));
+			assertEquals("actedOnBehalfOf(LogEventoDAOImpl, usuario)",expression.parse(tokens, line));
+		}
+	}
+	
+	@Test
+	void testConcat() {
+		String line = "06:32:17,262 INFO  [br.mil.mar.dsm.sinais.dao.LogEventoDAOImpl] (default task-104) - [CONEXAO-ID]: 5112990. [EVENTO]: 051700. [IS]: 513648. [OPERAÇÃO]: Registro da impressão do TIS para a inspecao - 513648 efetuado."; 
+		String expr = "testRegexp($line, \"\\[CONEXAO-ID\\]: \\d*\\.\") ? \"CON\" + $line.match(\"\\[CONEXAO-ID\\]: \\d*\\.\").replace(\"[CONEXAO-ID]: \",\"\").replace(\".\",\"\")";
+		Map<String, Expression> tokens = new HashMap<String, Expression>();
+		tokens.put("line", new StringExpression(line));
+		try {
+			assertEquals("CON5112990", new Expression(expr).parse(tokens, line));
+		} catch (InvalidExpression e) {
+			fail(e.getMessage());
 		}
 	}
 

@@ -1,9 +1,9 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 
-import exception.InvalidExpression;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.util.TokenUtil;
 
 public class NumberExpression extends Expression {
 

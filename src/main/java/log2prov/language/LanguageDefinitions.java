@@ -1,11 +1,11 @@
-package language;
+package log2prov.language;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import language.expressions.Expression;
+import log2prov.language.expressions.Expression;
 
 public class LanguageDefinitions {
 	

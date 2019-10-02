@@ -1,9 +1,9 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 
-import exception.InvalidExpression;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.util.TokenUtil;
 
 public class ContainsExpression extends Expression {
 
@@ -13,17 +13,17 @@ public class ContainsExpression extends Expression {
 			InvalidExpression e = new InvalidExpression();
 			e.setExpression(super.getStringExpression());
 			throw e;
-		} 
+		}
 	}
 
 	public String parse(Map<String, Expression> tokens, String line) throws InvalidExpression {
 		String result = "";
 		try {
-			String[] slices = super.getStringExpression().split("\\.");
+			String[] slices = super.getStringExpression().split("\\.", 2);
 			String left = slices[0];
 			String right = slices[1];
 			if (left != null && right != null) {
-				String[] innerSlice = right.split("contains\\(");
+				String[] innerSlice = right.split("contains\\(", 2);
 				Expression leftLiteral = new Expression(left);
 				Expression rightLiteral = new Expression(innerSlice[1].replace(")", ""));
 				if (leftLiteral.parse(tokens, line).contains(rightLiteral.parse(tokens, line))) {

@@ -1,11 +1,13 @@
-package util;
+package log2prov.util;
 
-import static language.expressions.ExpressionInterface.CONDITION_SEPARATOR;
-import static language.expressions.ExpressionInterface.ELSE_SEPARATOR;
-import static language.expressions.ExpressionInterface.FALSE;
-import static language.expressions.ExpressionInterface.NUMBER_PATTERN;
-import static language.expressions.ExpressionInterface.TRUE;
-import static language.expressions.ExpressionInterface.VAR_PATTERN;
+import static log2prov.language.expressions.ExpressionInterface.CONDITION_SEPARATOR;
+import static log2prov.language.expressions.ExpressionInterface.ELSE_SEPARATOR;
+import static log2prov.language.expressions.ExpressionInterface.CONCAT_SEPARATOR;
+import static log2prov.language.expressions.ExpressionInterface.VAR_SEPARATOR;
+import static log2prov.language.expressions.ExpressionInterface.FALSE;
+import static log2prov.language.expressions.ExpressionInterface.NUMBER_PATTERN;
+import static log2prov.language.expressions.ExpressionInterface.TRUE;
+import static log2prov.language.expressions.ExpressionInterface.VAR_PATTERN;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +18,10 @@ public class TokenUtil {
 
 	private static final String REGEXP_STRING = "\"(?:[^\"\\\\]|\\\\.)*\"";
 	private static final String CODED_QUESTION_MARK = ">>>>>>>Q<<<<<<<";
-	private static final String CODED_DOUBLE_DOTS_MARK = ">>>>>>>D<<<<<<<";
-	
+	private static final String CODED_COLON_MARK = ">>>>>>>C<<<<<<<";
+	private static final String CODED_COMMA_MARK = ">>>>>>>O<<<<<<<";
+	private static final String CODED_CONCAT_MARK = ">>>>>>>P<<<<<<<";
+
 	private static TokenUtil instance;
 
 	public static TokenUtil getInstance() {
@@ -68,6 +72,19 @@ public class TokenUtil {
 		return false;
 	}
 
+	public boolean checkConcatenation(String token) {
+		if (token != null && supressReserved(token).contains("+")) {
+			String[] slices = supressReserved(token).split("\\s*\\+\\s*");
+			for (int i = 0; i < slices.length; i++) {
+				if (isEmpty(slices[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public boolean checkIfThenElse(String token) {
 		if (token != null && token.contains(CONDITION_SEPARATOR)) {
 			String[] slices = token.split("\\s*\\" + CONDITION_SEPARATOR + "\\s*");
@@ -109,20 +126,19 @@ public class TokenUtil {
 
 	public boolean checkNumber(String token) {
 		if (token != null) {
-			boolean allTrue = true;
 			for (int i = 0; i < token.length(); i++) {
 				if (!NUMBER_PATTERN.matcher(token.charAt(i) + "").find()) {
-					allTrue = false;
+					return false;
 				}
 			}
-			return allTrue;
+			return true;
 		}
 		return false;
 	}
 
 	public boolean checkSubstring(String token) {
 		if (token != null && token.contains(".substring(")) {
-			String[] slices = token.split("\\.substring\\(");
+			String[] slices = token.split("\\.substring\\(", 2);
 			String left = slices[0];
 			if (left != null && slices.length > 1) {
 				String[] innerSlice = slices[1].split("\\s*,\\s*");
@@ -138,7 +154,7 @@ public class TokenUtil {
 
 	public boolean checkMatch(String token) {
 		if (token != null && token.contains(".match(")) {
-			String[] slices = token.split("\\.match\\(");
+			String[] slices = token.split("\\.match\\(", 2);
 			String left = slices[0];
 			if (left != null && slices.length > 1) {
 				String firstParam = slices[1].substring(0, slices[1].lastIndexOf(")"));
@@ -168,7 +184,7 @@ public class TokenUtil {
 
 	public boolean checkTestRegexp(String token) {
 		if (token != null && token.contains("testRegexp(")) {
-			String[] slices = token.split("testRegexp\\(");
+			String[] slices = TokenUtil.getInstance().supressReserved(token).split("testRegexp\\(");
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
@@ -305,7 +321,9 @@ public class TokenUtil {
 			while (m.find()) {
 				String replacement = token.substring(m.start(), m.end());
 				replacement = replacement.replace(CONDITION_SEPARATOR, CODED_QUESTION_MARK);
-				replacement = replacement.replace(ELSE_SEPARATOR, CODED_DOUBLE_DOTS_MARK);
+				replacement = replacement.replace(ELSE_SEPARATOR, CODED_COLON_MARK);
+				replacement = replacement.replace(CONCAT_SEPARATOR, CODED_CONCAT_MARK);
+				replacement = replacement.replace(VAR_SEPARATOR, CODED_COMMA_MARK);
 				replacements.put(token.substring(m.start(), m.end()), replacement);
 			}
 			result = token;
@@ -315,14 +333,57 @@ public class TokenUtil {
 		}
 		return result;
 	}
-	
+
 	public String impressReserved(String token) {
 		String result = null;
 		if (token != null) {
 			result = token.replace(CODED_QUESTION_MARK, CONDITION_SEPARATOR);
-			result = result.replace(CODED_DOUBLE_DOTS_MARK, ELSE_SEPARATOR);
+			result = result.replace(CODED_COLON_MARK, ELSE_SEPARATOR);
+			result = result.replace(CODED_CONCAT_MARK, CONCAT_SEPARATOR);
+			result = result.replace(CODED_COMMA_MARK, VAR_SEPARATOR);
 		}
 		return result;
+	}
+
+	public String impressEscaped(String token) {
+		String result = null;
+		if (token != null) {
+			result = token.replace(" ", "_");
+			/*
+			 * result = result.replace("=", "\\="); result = result.replace("'", "\\'");
+			 * result = result.replace("(", "\\("); result = result.replace(")", "\\)");
+			 * result = result.replace(",", "\\,"); result = result.replace(";", "\\;");
+			 * result = result.replace("[", "\\["); result = result.replace("]", "\\]");
+			 * 
+			 * result = result.replace(".", "\\."); result = result.replace(":", "\\:");
+			 * result = result.replace("-", "\\-");
+			 */
+		}
+		return result;
+	}
+
+	public boolean checkLineHeader(String token) {
+		return token != null && token.contains("[line]");
+	}
+	
+	public boolean checkAgentsHeader(String token) {
+		return token != null && token.contains("[agents]");
+	}
+	
+	public boolean checkActivitiesHeader(String token) {
+		return token != null && token.contains("[activities]");
+	}
+	
+	public boolean checkEntitiesHeader(String token) {
+		return token != null && token.contains("[entities]");
+	}
+	
+	public boolean checkStatementsHeader(String token) {
+		return token != null && token.contains("[statements]");
+	}
+
+	public boolean checkTokensHeader(String token) {
+		return token != null && token.contains("[tokens]");
 	}
 
 }

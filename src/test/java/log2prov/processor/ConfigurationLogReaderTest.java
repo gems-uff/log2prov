@@ -1,4 +1,4 @@
-package processor;
+package log2prov.processor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,14 +7,14 @@ import java.net.URISyntaxException;
 
 import org.junit.jupiter.api.Test;
 
-import readers.ConfigurationFileReader;
+import log2prov.readers.ConfigurationFileReader;
 
 class ConfigurationLogReaderTest {
 
 	@Test
 	void testReadFile() {
 		try {
-			ConfigurationFileReader logReader = new ConfigurationFileReader("etc/sample1.conf");
+			ConfigurationFileReader logReader = new ConfigurationFileReader("etc/analysis1.conf");
 			logReader.readFile();
 			assertNotNull(logReader.getDefinitions());
 			
@@ -39,10 +39,10 @@ class ConfigurationLogReaderTest {
 			assertEquals("\"commOut\"", logReader.getDefinitions().getTokens().get("commOut").getStringExpression());
 			assertEquals("\"cpu\"", logReader.getDefinitions().getTokens().get("cpu").getStringExpression());
 
-			assertEquals(9, logReader.getDefinitions().getStatements().size());
+			assertEquals(8, logReader.getDefinitions().getStatements().size());
 			assertEquals(3, logReader.getDefinitions().getAgents().size());
 			assertEquals(6, logReader.getDefinitions().getActivities().size());
-			assertEquals(3, logReader.getDefinitions().getEntities().size());
+			assertEquals(2, logReader.getDefinitions().getEntities().size());
 		} catch (URISyntaxException e) {
 			fail(e.getMessage());
 		} catch (IOException e) {

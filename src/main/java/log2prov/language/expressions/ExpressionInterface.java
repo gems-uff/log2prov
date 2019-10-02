@@ -1,9 +1,9 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import exception.InvalidExpression;
+import log2prov.exception.InvalidExpression;
 
 public interface ExpressionInterface {
 
@@ -14,6 +14,8 @@ public interface ExpressionInterface {
 	public static final String FALSE = "false";
 	public static final String NULL = "-";
 	public static final String ELSE_SEPARATOR = ":";
+	public static final String CONCAT_SEPARATOR = "+";
+	public static final String VAR_SEPARATOR = ",";
 	public static final String CONDITION_SEPARATOR = "?";
 	public static final int FALSE_TYPE = -2;
 	public static final int TRUE_TYPE = -1;
@@ -39,6 +41,7 @@ public interface ExpressionInterface {
 	public static final int REPLACE = 18;
 	public static final int QUOTED_STRING = 19;
 	public static final int NUMBER = 20;
+	public static final int CONCATENATION = 21;
 
 	public String getStringExpression();
 

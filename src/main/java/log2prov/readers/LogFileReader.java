@@ -1,6 +1,6 @@
-package readers;
+package log2prov.readers;
 
-import static language.expressions.ExpressionInterface.*;
+import static log2prov.language.expressions.ExpressionInterface.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,9 +11,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-import exception.InvalidExpression;
-import language.expressions.Expression;
-import language.expressions.StatementExpression;
+import log2prov.exception.InvalidExpression;
+import log2prov.language.expressions.Expression;
+import log2prov.language.expressions.StatementExpression;
 
 public class LogFileReader {
 

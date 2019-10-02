@@ -1,11 +1,11 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import exception.InvalidExpression;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.util.TokenUtil;
 
 public class TestRegexpExpression extends Expression {
 
@@ -21,14 +21,14 @@ public class TestRegexpExpression extends Expression {
 	public String parse(Map<String, Expression> tokens, String line) throws InvalidExpression {
 		String result = "";
 		try {
-			String[] slices = super.getStringExpression().split("testRegexp\\(");
+			String[] slices = TokenUtil.getInstance().supressReserved(super.getStringExpression()).split("testRegexp\\(");
 			String right = slices[1];
 			if (right != null) {
 				String[] innerSlice = right.split("\\s*,\\s*");
 				String firstParam = innerSlice[0];
 				String secondParam = innerSlice[1].substring(0, innerSlice[1].lastIndexOf(")"));
-				Expression leftLiteral = new Expression(firstParam);
-				Expression rightLiteral = new Expression(secondParam);
+				Expression leftLiteral = new Expression(TokenUtil.getInstance().impressReserved(firstParam));
+				Expression rightLiteral = new Expression(TokenUtil.getInstance().impressReserved(secondParam));
 				Pattern p = Pattern.compile(rightLiteral.parse(tokens, line));
 				Matcher m = p.matcher(leftLiteral.parse(tokens, line));
 				if (m.find()) {

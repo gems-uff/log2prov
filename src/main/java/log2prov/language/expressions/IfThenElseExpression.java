@@ -1,9 +1,9 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 
-import exception.InvalidExpression;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.util.TokenUtil;
 
 public class IfThenElseExpression extends Expression {
 
@@ -19,9 +19,9 @@ public class IfThenElseExpression extends Expression {
 			throw e;
 		} else {
 			String[] slices = TokenUtil.getInstance().supressReserved(getStringExpression())
-					.split("\\s*\\" + CONDITION_SEPARATOR + "\\s*");
+					.split("\\s*\\" + CONDITION_SEPARATOR + "\\s*", 2);
 			condition = new BooleanExpression(TokenUtil.getInstance().impressReserved(slices[0]));
-			String[] thenElse = slices[1].split("\\s*" + ELSE_SEPARATOR + "\\s*");
+			String[] thenElse = slices[1].split("\\s*" + ELSE_SEPARATOR + "\\s*", 2);
 			String then = thenElse[0];
 			trueConsequence = new Expression(TokenUtil.getInstance().impressReserved(then));
 			String elze = null;

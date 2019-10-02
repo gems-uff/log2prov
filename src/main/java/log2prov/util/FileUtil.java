@@ -1,4 +1,4 @@
-package util;
+package log2prov.util;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;

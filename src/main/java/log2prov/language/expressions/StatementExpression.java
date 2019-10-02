@@ -1,12 +1,12 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import exception.InvalidExpression;
-import util.RegexpUtil;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.util.RegexpUtil;
+import log2prov.util.TokenUtil;
 
 public class StatementExpression extends Expression {
 
@@ -55,8 +55,8 @@ public class StatementExpression extends Expression {
 				Expression leftLiteral = new Expression(innerSlice[0]);
 				Expression rightLiteral = new Expression(secondParam);
 				result = super.getStringExpression().replace(innerSlice[0],
-						"\"" + leftLiteral.parse(tokens, line) + "\"");
-				result = result.replace(secondParam, "\"" + rightLiteral.parse(tokens, line) + "\"");
+						 TokenUtil.getInstance().impressEscaped(leftLiteral.parse(tokens, line)));
+				result = result.replace(TokenUtil.getInstance().impressEscaped(secondParam),rightLiteral.parse(tokens, line));
 				result = RegexpUtil.getInstance().replace(result, "\\s*,\\s*", ", ");
 			}
 		} catch (Exception e) {

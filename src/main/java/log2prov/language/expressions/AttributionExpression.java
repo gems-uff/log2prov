@@ -1,9 +1,9 @@
-package language.expressions;
+package log2prov.language.expressions;
 
 import java.util.Map;
 
-import exception.InvalidExpression;
-import util.TokenUtil;
+import log2prov.exception.InvalidExpression;
+import log2prov.util.TokenUtil;
 
 public class AttributionExpression extends Expression {
 
@@ -21,7 +21,7 @@ public class AttributionExpression extends Expression {
 			e.setExpression(super.getStringExpression());
 			throw e;
 		} else {
-			String[] slices = expr.split("\\s*=\\s*");
+			String[] slices = expr.split("\\s*=\\s*",2);
 			String left = slices[0];
 			String right = slices[1];
 			if (left != null && right != null) {
