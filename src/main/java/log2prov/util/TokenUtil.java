@@ -397,15 +397,20 @@ public class TokenUtil {
 		String result = null;
 		if (token != null) {
 			result = token.replace(" ", "_");
-			/*
-			 * result = result.replace("=", "\\="); result = result.replace("'", "\\'");
-			 * result = result.replace("(", "\\("); result = result.replace(")", "\\)");
-			 * result = result.replace(",", "\\,"); result = result.replace(";", "\\;");
-			 * result = result.replace("[", "\\["); result = result.replace("]", "\\]");
-			 * 
-			 * result = result.replace(".", "\\."); result = result.replace(":", "\\:");
-			 * result = result.replace("-", "\\-");
-			 */
+
+			result = result.replace("=", "\\=");
+			result = result.replace("'", "\\'");
+			result = result.replace("(", "\\(");
+			result = result.replace(")", "\\)");
+			result = result.replace(",", "\\,");
+			result = result.replace(";", "\\;");
+			result = result.replace("[", "\\[");
+			result = result.replace("]", "\\]");
+
+			result = result.replace(".", "\\.");
+			result = result.replace(":", "\\:");
+			result = result.replace("-", "\\-");
+
 		}
 		return result;
 	}
