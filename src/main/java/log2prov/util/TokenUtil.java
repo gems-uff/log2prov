@@ -4,6 +4,9 @@ import static log2prov.language.expressions.ExpressionInterface.CONDITION_SEPARA
 import static log2prov.language.expressions.ExpressionInterface.ELSE_SEPARATOR;
 import static log2prov.language.expressions.ExpressionInterface.CONCAT_SEPARATOR;
 import static log2prov.language.expressions.ExpressionInterface.VAR_SEPARATOR;
+import static log2prov.language.expressions.ExpressionInterface.VAR_POINTER;
+import static log2prov.language.expressions.ExpressionInterface.OPEN_PARENTESIS;
+import static log2prov.language.expressions.ExpressionInterface.CLOSE_PARENTESIS;
 import static log2prov.language.expressions.ExpressionInterface.AND_SEPARATOR;
 import static log2prov.language.expressions.ExpressionInterface.OR_SEPARATOR;
 import static log2prov.language.expressions.ExpressionInterface.FALSE;
@@ -19,6 +22,9 @@ import java.util.regex.Pattern;
 public class TokenUtil {
 
 	private static final String REGEXP_STRING = "\"(?:[^\"\\\\]|\\\\.)*\"";
+	private static final String CODED_OPEN_PARENTESIS = ">>>>>>>OP<<<<<<<";
+	private static final String CODED_CLOSE_PARENTESIS = ">>>>>>>CP<<<<<<<";
+	private static final String CODED_VAR_POINTER = ">>>>>>>V<<<<<<<";
 	private static final String CODED_QUESTION_MARK = ">>>>>>>Q<<<<<<<";
 	private static final String CODED_COLON_MARK = ">>>>>>>C<<<<<<<";
 	private static final String CODED_COMMA_MARK = ">>>>>>>O<<<<<<<";
@@ -91,6 +97,10 @@ public class TokenUtil {
 		return false;
 	}
 
+	public boolean checkParentesisExpression(String token) {
+		return token != null && token.replace(" ","").substring(0, 1).equals("(") && token.split("\\s(\\s").length == token.split("\\s)\\s").length;
+	}
+
 	public boolean checkAndExpression(String token) {
 		if (token != null && supressReserved(token).contains("&&")) {
 			String[] slices = supressReserved(token).split("\\s*&&\\s*");
@@ -106,6 +116,11 @@ public class TokenUtil {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean checkNotExpression(String token) {
+		return token != null && token.replace(" ", "").substring(0, 1).equals("!")
+				&& checkBooleanExpression(token.replace(" ", "").substring(1, token.replace(" ", "").length()));
 	}
 
 	public boolean checkOrExpression(String token) {
@@ -138,7 +153,8 @@ public class TokenUtil {
 
 	public boolean checkBooleanExpression(String token) {
 		if (token != null && (checkTestRegexp(token) || checkContains(token) || checkAndExpression(token)
-				|| checkOrExpression(token) || token.contains(TRUE) || token.contains(FALSE))) {
+				|| checkOrExpression(token) || checkNotExpression(token) || token.contains(TRUE)
+				|| token.contains(FALSE))) {
 			return true;
 		}
 		return false;
@@ -360,6 +376,9 @@ public class TokenUtil {
 			Matcher m = p.matcher(token);
 			while (m.find()) {
 				String replacement = token.substring(m.start(), m.end());
+				replacement = replacement.replace(OPEN_PARENTESIS, CODED_OPEN_PARENTESIS);
+				replacement = replacement.replace(CLOSE_PARENTESIS, CODED_CLOSE_PARENTESIS);
+				replacement = replacement.replace(VAR_POINTER, CODED_VAR_POINTER);
 				replacement = replacement.replace(CONDITION_SEPARATOR, CODED_QUESTION_MARK);
 				replacement = replacement.replace(ELSE_SEPARATOR, CODED_COLON_MARK);
 				replacement = replacement.replace(AND_SEPARATOR, CODED_AND_MARK);
@@ -382,6 +401,9 @@ public class TokenUtil {
 		String result = null;
 		if (token != null) {
 			result = token.replace(CODED_QUESTION_MARK, CONDITION_SEPARATOR);
+			result = result.replace(CODED_OPEN_PARENTESIS, OPEN_PARENTESIS);
+			result = result.replace(CODED_CLOSE_PARENTESIS, CLOSE_PARENTESIS);
+			result = result.replace(CODED_VAR_POINTER, VAR_POINTER);
 			result = result.replace(CODED_AND_MARK, AND_SEPARATOR);
 			result = result.replace(CODED_OR_MARK, OR_SEPARATOR);
 			result = result.replace(CODED_TRUE_MARK, TRUE);
@@ -437,6 +459,11 @@ public class TokenUtil {
 
 	public boolean checkTokensHeader(String token) {
 		return token != null && token.contains("[tokens]");
+	}
+
+	public static void main(String[] args) {
+		String tst = "  !false";
+		System.out.println(TokenUtil.getInstance().checkNotExpression(tst));
 	}
 
 }

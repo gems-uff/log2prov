@@ -11,7 +11,8 @@ public class BooleanExpression extends Expression {
 		super(expr);
 		if (!(TokenUtil.getInstance().checkAndExpression(expr) || TokenUtil.getInstance().checkOrExpression(expr)
 				|| TokenUtil.getInstance().checkTestRegexp(expr) || TokenUtil.getInstance().checkContains(expr)
-				|| TokenUtil.getInstance().checkTrue(expr) || TokenUtil.getInstance().checkFalse(expr))) {
+				|| TokenUtil.getInstance().checkNotExpression(expr) || TokenUtil.getInstance().checkTrue(expr)
+				|| TokenUtil.getInstance().checkFalse(expr))) {
 			InvalidExpression e = new InvalidExpression();
 			throw e;
 		}
@@ -28,6 +29,8 @@ public class BooleanExpression extends Expression {
 			result = new TestRegexpExpression(super.getStringExpression()).parse(tokens, line);
 		} else if (TokenUtil.getInstance().checkContains(super.getStringExpression())) {
 			result = new ContainsExpression(super.getStringExpression()).parse(tokens, line);
+		} else if (TokenUtil.getInstance().checkNotExpression(super.getStringExpression())) {
+			result = new NotExpression(super.getStringExpression()).parse(tokens, line);
 		} else if (TokenUtil.getInstance().checkTrue(super.getStringExpression())) {
 			result = TRUE;
 		} else if (TokenUtil.getInstance().checkFalse(super.getStringExpression())) {

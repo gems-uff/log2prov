@@ -227,6 +227,8 @@ class ExpressionTest {
 			assertEquals("deu true!", new Expression(expr).parse(null, null));
 			expr = "true || true ? \"deu true!\" : \"deu false!\"";
 			assertEquals("deu true!", new Expression(expr).parse(null, null));
+			expr = "!false || !true ? \"deu true!\" : \"deu false!\"";
+			assertEquals("deu true!", new Expression(expr).parse(null, null));
 		} catch (InvalidExpression e) {
 			fail(e.getMessage());
 		}

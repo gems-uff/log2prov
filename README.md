@@ -56,7 +56,8 @@ java -jar log2prov-v1.0.jar -d etc\sample.conf -i mylog.log -o myprovlog.provn
 
 ### AST
 ```
-expression     := IfThenExpr
+expression     := ParentesisExpr
+                | IfThenExpr
                 | ConcatExpr 
                 | SubstringExpr 
                 | ContainsExpr 
@@ -69,6 +70,8 @@ expression     := IfThenExpr
                 | StringLiteral
                 | NumberLiteral
                 | $identifier   
+                
+ParentesisExpr := (expression)
                
 IfThenExpr     := BooleanExpr ? expression : expression
                 | BooleanExpr ? expression 
@@ -77,8 +80,11 @@ BooleanExpr    := TestRegexpExpr
                 | AndExpr
                 | OrExpr
                 | ContainsExpr 
+                | NotExpr
                 | true 
                 | false
+                
+NotExpr        := !BooleanExpr
 
 AndExpr        := BooleanExpr && BooleanExpr 
                 | BooleanExpr && AndExpr
@@ -104,12 +110,12 @@ MatchExpr      := stringLiteral.match(stringLiteral)
 SubstringExpr  := stringLiteral.substring(numberLiteral, numberLiteral) 
                 | SubstringExpr.substring(numberLiteral, numberLiteral)
                
-StatementExpr  := actedOnBehalfOf($identifier, $identifier) 
-                | wasAttributedTo($identifier, $identifier) 
-                | wasDerivedFrom($identifier, $identifier) 
-                | wasGeneratedBy($identifier, $identifier) 
-                | used($identifier, $identifier) 
-                | wasAssociatedWith($identifier, $identifier)
+StatementExpr  := actedOnBehalfOf($identifier, $identifier, -) 
+                | wasAttributedTo($identifier, $identifier, -)
+                | wasDerivedFrom($identifier, $identifier, -)
+                | wasGeneratedBy($identifier, $identifier, -)
+                | used($identifier, $identifier, -)
+                | wasAssociatedWith($identifier, $identifier, -)
                
 identifier     := [A-Za-z][A-Za-z0-9]*
                
