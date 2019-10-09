@@ -85,10 +85,8 @@ BooleanExpr    := ParenthesisExpr
 ParentesisExpr := (BooleanExpr)
 
 AndExpr        := BooleanExpr && BooleanExpr 
-                | BooleanExpr && AndExpr
 
 OrExpr         := BooleanExpr || BooleanExpr 
-                | BooleanExpr || AndExpr
                 
 NotExpr        := !BooleanExpr
                             
