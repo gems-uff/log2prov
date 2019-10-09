@@ -19,7 +19,7 @@ Options:
 Example...
 
 ```
-java -jar log2prov-v1.0.jar -d etc\sample.conf -i etc\sample.conf -o etc\sample.provn
+java -jar log2prov-v1.0.jar -d etc\sample.conf -i etc\sample.log -o etc\sample.provn
 ```
 
 ## Definitions File
