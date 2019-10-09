@@ -12,8 +12,8 @@ Options:
 -d <definitions_file>
 -i <input_log_file>
 -o <output_provn_file>
--p namespace prefix [optional]
--n namespace [optional]
+-p namespace prefix [optional, default = default]
+-n namespace [optional, default = #]
 ```
 
 Example...
