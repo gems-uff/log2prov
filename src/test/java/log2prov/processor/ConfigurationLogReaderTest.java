@@ -18,31 +18,30 @@ class ConfigurationLogReaderTest {
 			logReader.readFile();
 			assertNotNull(logReader.getDefinitions());
 			
-			assertEquals("testRegexp($line, \"^[0-9][0-9]\")",
+			assertEquals("testRegexp($line, \"^([0][1-9]|[1][0-2])-([0][1-9]|[1][0-9]|[2][0-9]|[3][0-1])-([1][9][0-9]{2}|[2][0-9]{3})( ([0-1][0-9]|[2][0-3]):[0-5][0-9]:[0-5][0-9])\")",
 					logReader.getDefinitions().getLineTest().getStringExpression());
 			
-			assertEquals("$line.match(\"\\[(\\w*\\.)+\\w*\\]\")",
-					logReader.getDefinitions().getTokens().get("t1").getStringExpression());
+			assertEquals("testRegexp($line, \"\\[AGENT\\]:\\s*\\w*[!\\.]\") ? $line.match(\"\\[AGENT\\]:\\s*\\w*[!\\.]\")",
+					logReader.getDefinitions().getTokens().get("preAgent").getStringExpression());
 			
-			assertEquals("$t1.match(\"(.\\w*])$\")",
-					logReader.getDefinitions().getTokens().get("t2").getStringExpression());
+			assertEquals("testRegexp($line, \"\\[AGENT\\]:\\s*\\w*[!\\.]\") ? $preAgent.replace(\"[AGENT]: \", \"\").replace(\"!\", \"\").replace(\".\", \"\")",
+					logReader.getDefinitions().getTokens().get("ag").getStringExpression());
 			
-			assertEquals("$t2.replace(\".\",\"\").replace(\"]\",\"\")",
-					logReader.getDefinitions().getTokens().get("classe").getStringExpression());
+			assertEquals("testRegexp($line, \"\\[ACTIVITY\\]:\\s*\\w*[!\\.;]\") ? $line.match(\"\\[ACTIVITY\\]:\\s*\\w*[!\\.;]\")",
+					logReader.getDefinitions().getTokens().get("preActivity").getStringExpression());
 			
-			assertEquals("$t1.replace(\"[\",\"\").replace($t2,\"\")",
-					logReader.getDefinitions().getTokens().get("pacote").getStringExpression());
+			assertEquals("testRegexp($line, \"\\[ACTIVITY\\]:\\s*\\w*[!\\.;]\") ? $preActivity.replace(\"[ACTIVITY]: \", \"\").replace(\"!\", \"\").replace(\".\", \"\").replace(\";\", \"\")",
+					logReader.getDefinitions().getTokens().get("ac").getStringExpression());
 			
+			assertEquals("testRegexp($line, \"\\[ACTIVITY\\]:\\s*\\w*[!\\.;]$\") ? $line.match(\"\\[ACTIVITY\\]:\\s*\\w*[!\\.;]$\")",
+					logReader.getDefinitions().getTokens().get("preInformer").getStringExpression());
+			assertEquals("testRegexp($line, \"\\[ACTIVITY\\]:\\s*\\w*[!\\.;]$\") ? $preInformer.replace(\"[ACTIVITY]: \", \"\").replace(\"!\", \"\").replace(\".\", \"\").replace(\";\", \"\")",
+					logReader.getDefinitions().getTokens().get("informer").getStringExpression());
 
-			assertEquals("\"io\"", logReader.getDefinitions().getTokens().get("io").getStringExpression());
-			assertEquals("\"commIn\"", logReader.getDefinitions().getTokens().get("commIn").getStringExpression());
-			assertEquals("\"commOut\"", logReader.getDefinitions().getTokens().get("commOut").getStringExpression());
-			assertEquals("\"cpu\"", logReader.getDefinitions().getTokens().get("cpu").getStringExpression());
-
-			assertEquals(8, logReader.getDefinitions().getStatements().size());
-			assertEquals(3, logReader.getDefinitions().getAgents().size());
-			assertEquals(6, logReader.getDefinitions().getActivities().size());
-			assertEquals(2, logReader.getDefinitions().getEntities().size());
+			assertEquals(5, logReader.getDefinitions().getStatements().size());
+			assertEquals(1, logReader.getDefinitions().getAgents().size());
+			assertEquals(2, logReader.getDefinitions().getActivities().size());
+			assertEquals(1, logReader.getDefinitions().getEntities().size());
 		} catch (URISyntaxException e) {
 			fail(e.getMessage());
 		} catch (IOException e) {

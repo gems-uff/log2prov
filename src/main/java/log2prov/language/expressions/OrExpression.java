@@ -21,25 +21,23 @@ public class OrExpression extends Expression {
 		String result = "";
 		try {
 			String[] slices = TokenUtil.getInstance().supressReserved(super.getStringExpression())
-					.split("\\s*\\|\\|\\s*");
-			if (slices.length > 0) {
-
+					.split("\\s*\\|\\|\\s*", 2);
+			if (slices.length == 2) {
 				if (TokenUtil.getInstance().checkBooleanExpression(slices[0])) {
-					result = new BooleanExpression(TokenUtil.getInstance().impressReserved(slices[0])).parse(tokens, line);
+					result = new BooleanExpression(TokenUtil.getInstance().impressReserved(slices[0])).parse(tokens,
+							line);
 				} else {
 					throw new InvalidExpression("Expressão AND inválida! Expressão não booleana entre &&. Expressão: "
 							+ super.getStringExpression());
 				}
 
-				for (int i = 1; i < slices.length; i++) {
-					if (TokenUtil.getInstance().checkBooleanExpression(slices[i])) {
-						result = "" +(Boolean.parseBoolean(result) 
-								|| Boolean.parseBoolean(new BooleanExpression(TokenUtil.getInstance().impressReserved(slices[i])).parse(tokens, line)));
-					} else {
-						throw new InvalidExpression(
-								"Expressão OR inválida! Expressão não booleana entre ||. Expressão: "
-										+ super.getStringExpression());
-					}
+				if (TokenUtil.getInstance().checkBooleanExpression(slices[0])) {
+					result = "" + (Boolean.parseBoolean(result) || Boolean
+							.parseBoolean(new BooleanExpression(TokenUtil.getInstance().impressReserved(slices[1]))
+									.parse(tokens, line)));
+				} else {
+					throw new InvalidExpression("Expressão OR inválida! Expressão não booleana entre ||. Expressão: "
+							+ super.getStringExpression());
 				}
 			}
 		} catch (Exception e) {

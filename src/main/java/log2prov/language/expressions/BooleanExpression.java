@@ -9,7 +9,8 @@ public class BooleanExpression extends Expression {
 
 	public BooleanExpression(String expr) throws InvalidExpression {
 		super(expr);
-		if (!(TokenUtil.getInstance().checkAndExpression(expr) || TokenUtil.getInstance().checkOrExpression(expr)
+		if (!(TokenUtil.getInstance().checkParenthesisExpression(expr)
+				|| TokenUtil.getInstance().checkAndExpression(expr) || TokenUtil.getInstance().checkOrExpression(expr)
 				|| TokenUtil.getInstance().checkTestRegexp(expr) || TokenUtil.getInstance().checkContains(expr)
 				|| TokenUtil.getInstance().checkNotExpression(expr) || TokenUtil.getInstance().checkTrue(expr)
 				|| TokenUtil.getInstance().checkFalse(expr))) {
@@ -21,7 +22,9 @@ public class BooleanExpression extends Expression {
 	@Override
 	public String parse(Map<String, Expression> tokens, String line) throws InvalidExpression {
 		String result = "";
-		if (TokenUtil.getInstance().checkAndExpression(super.getStringExpression())) {
+		if (TokenUtil.getInstance().checkParenthesisExpression(super.getStringExpression())) {
+			result = new ParenthesisExpression(super.getStringExpression()).parse(tokens, line);
+		} else if (TokenUtil.getInstance().checkAndExpression(super.getStringExpression())) {
 			result = new AndExpression(super.getStringExpression()).parse(tokens, line);
 		} else if (TokenUtil.getInstance().checkOrExpression(super.getStringExpression())) {
 			result = new OrExpression(super.getStringExpression()).parse(tokens, line);

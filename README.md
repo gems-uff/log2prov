@@ -9,7 +9,7 @@ java -jar log2prov-v1.0.jar -h
 Log2Prov v1.0
 
 Options:
--d <configuration_file>
+-d <definitions_file>
 -i <input_log_file>
 -o <output_provn_file>
 -p namespace prefix [optional]
@@ -19,10 +19,10 @@ Options:
 Example...
 
 ```
-java -jar log2prov-v1.0.jar -d etc\sample.conf -i mylog.log -o myprovlog.provn
+java -jar log2prov-v1.0.jar -d etc\sample.conf -i etc\sample.conf -o etc\sample.provn
 ```
 
-## CONF File
+## Definitions File
 
 ### Structure
 ```
@@ -56,8 +56,7 @@ java -jar log2prov-v1.0.jar -d etc\sample.conf -i mylog.log -o myprovlog.provn
 
 ### AST
 ```
-expression     := ParentesisExpr
-                | IfThenExpr
+expression     := IfThenExpr
                 | ConcatExpr 
                 | SubstringExpr 
                 | ContainsExpr 
@@ -70,21 +69,20 @@ expression     := ParentesisExpr
                 | StringLiteral
                 | NumberLiteral
                 | $identifier   
-                
-ParentesisExpr := (expression)
                
 IfThenExpr     := BooleanExpr ? expression : expression
                 | BooleanExpr ? expression 
                  
-BooleanExpr    := TestRegexpExpr 
+BooleanExpr    := ParenthesisExpr 
                 | AndExpr
                 | OrExpr
-                | ContainsExpr 
                 | NotExpr
+                | TestRegexpExpr 
+                | ContainsExpr 
                 | true 
                 | false
                 
-NotExpr        := !BooleanExpr
+ParentesisExpr := (BooleanExpr)
 
 AndExpr        := BooleanExpr && BooleanExpr 
                 | BooleanExpr && AndExpr
@@ -92,12 +90,14 @@ AndExpr        := BooleanExpr && BooleanExpr
 OrExpr         := BooleanExpr || BooleanExpr 
                 | BooleanExpr || AndExpr
                 
-ConcatExpr     := stringLiteral + stringLiteral 
-                | stringLiteral + ConcatExpr            
-               
+NotExpr        := !BooleanExpr
+                            
 TestRegexpExpr := testRegexp(stringLiteral, stringLiteral)
-               
+
 ContainsExpr   := stringLiteral.contains(stringLiteral)
+               
+ConcatExpr     := stringLiteral + stringLiteral 
+                | stringLiteral + ConcatExpr
                
 AssignExpr     := identifier = expression
                
@@ -110,12 +110,13 @@ MatchExpr      := stringLiteral.match(stringLiteral)
 SubstringExpr  := stringLiteral.substring(numberLiteral, numberLiteral) 
                 | SubstringExpr.substring(numberLiteral, numberLiteral)
                
-StatementExpr  := actedOnBehalfOf($identifier, $identifier, -) 
-                | wasAttributedTo($identifier, $identifier, -)
-                | wasDerivedFrom($identifier, $identifier, -)
-                | wasGeneratedBy($identifier, $identifier, -)
-                | used($identifier, $identifier, -)
-                | wasAssociatedWith($identifier, $identifier, -)
+StatementExpr  := actedOnBehalfOf($literal, $literal, -) 
+                | used($literal, $literal, -)
+                | wasDerivedFrom($literal, $literal, -)
+                | wasGeneratedBy($literal, $literal, -)
+                | wasAssociatedWith($literal, $literal, -)
+                | wasAttributedTo($literal, $literal)
+                | wasInformedBy($literal, $literal)
                
 identifier     := [A-Za-z][A-Za-z0-9]*
                

@@ -35,7 +35,7 @@ public class Main {
 		this.activities = new ArrayList<>();
 		this.entities = new ArrayList<>();
 		this.namespacePrefix = "default";
-		this.namespace = "";
+		this.namespace = "#";
 	}
 
 	private void process(String definitionsFile, String inputFile, String outputFile) {
@@ -46,12 +46,10 @@ public class Main {
 			BufferedReader br = new BufferedReader(new FileReader(new File(inputFile)));
 			int lineNumber = 1;
 			fw.write("document\n");
+			fw.write("\n");
 			fw.write(this.namespacePrefix);
-			if (this.namespace.length() > 0) {
-				fw.write(" <" + this.namespace + ">\n");
-			} else {
-				fw.write("\n");
-			}
+			fw.write(" <" + this.namespace + ">\n");
+			fw.write("\n");
 			int totalLines = FileUtil.getInstance().countLines(inputFile) + 1;
 			try {
 				String line = br.readLine();
@@ -78,6 +76,7 @@ public class Main {
 			} finally {
 				br.close();
 			}
+			fw.write("\n");
 			fw.write("endDocument");
 			fw.close();
 		} catch (URISyntaxException e) {

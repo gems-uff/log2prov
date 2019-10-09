@@ -16,6 +16,7 @@ import static log2prov.language.expressions.ExpressionInterface.VAR_PATTERN;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,20 +98,51 @@ public class TokenUtil {
 		return false;
 	}
 
-	public boolean checkParentesisExpression(String token) {
-		return token != null && token.replace(" ","").substring(0, 1).equals("(") && token.split("\\s(\\s").length == token.split("\\s)\\s").length;
+	public boolean checkParenthesisExpression(String token) {
+		boolean result = false;
+		if (token != null && token.replace(" ", "").startsWith("(")) {
+			Stack<Integer> s = new Stack<>();
+			for (int i = 0; i < token.length(); i++) {
+				try {
+					if (token.charAt(i) == '(') {
+						s.push(i);
+					} else if (token.charAt(i) == ')') {
+						s.pop();
+					}
+				} catch (Exception e) {
+					return false;
+				}
+			}
+			if (s.empty()) {
+				return true;
+			}
+		}
+		return result;
 	}
 
 	public boolean checkAndExpression(String token) {
-		if (token != null && supressReserved(token).contains("&&")) {
-			String[] slices = supressReserved(token).split("\\s*&&\\s*");
-			for (int i = 0; i < slices.length; i++) {
-				if (isEmpty(slices[i])) {
+		if (token != null && supressReserved(token).contains("&&") && checkFirstOperator("&&", token)) {
+			String[] slices = supressReserved(token).split("\\s*&&\\s*", 2);
+			if (isEmpty(slices[0])) {
+				return false;
+			} else {
+				if (!TokenUtil.getInstance().checkBooleanExpression(slices[1])) {
 					return false;
-				} else {
-					if (!TokenUtil.getInstance().checkBooleanExpression(slices[i])) {
-						return false;
-					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean checkOrExpression(String token) {
+		if (token != null && supressReserved(token).contains("||") && checkFirstOperator("||", token)) {
+			String[] slices = supressReserved(token).split("\\s*\\|\\|\\s*", 2);
+			if (isEmpty(slices[0])) {
+				return false;
+			} else {
+				if (!TokenUtil.getInstance().checkBooleanExpression(slices[1])) {
+					return false;
 				}
 			}
 			return true;
@@ -119,25 +151,16 @@ public class TokenUtil {
 	}
 
 	public boolean checkNotExpression(String token) {
-		return token != null && token.replace(" ", "").substring(0, 1).equals("!")
+		return token != null && token.replace(" ", "").startsWith("!")
 				&& checkBooleanExpression(token.replace(" ", "").substring(1, token.replace(" ", "").length()));
 	}
 
-	public boolean checkOrExpression(String token) {
-		if (token != null && supressReserved(token).contains("||")) {
-			String[] slices = supressReserved(token).split("\\s*\\|\\|\\s*");
-			for (int i = 0; i < slices.length; i++) {
-				if (isEmpty(slices[i])) {
-					return false;
-				} else {
-					if (!TokenUtil.getInstance().checkBooleanExpression(slices[i])) {
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-		return false;
+	private boolean checkFirstOperator(String op, String token) {
+		int indexAnd = token.indexOf("&&") == -1 ? Integer.MAX_VALUE : token.indexOf("&&");
+		int indexOr = token.indexOf("||") == -1 ? Integer.MAX_VALUE : token.indexOf("||");
+		int indexNot = token.indexOf("!") == -1 ? Integer.MAX_VALUE : token.indexOf("!");
+		return token != null && token.indexOf(op) <= indexAnd && token.indexOf(op) <= indexOr
+				&& token.indexOf(op) <= indexNot;
 	}
 
 	public boolean checkIfThenElse(String token) {
@@ -152,8 +175,8 @@ public class TokenUtil {
 	}
 
 	public boolean checkBooleanExpression(String token) {
-		if (token != null && (checkTestRegexp(token) || checkContains(token) || checkAndExpression(token)
-				|| checkOrExpression(token) || checkNotExpression(token) || token.contains(TRUE)
+		if (token != null && (checkParenthesisExpression(token) && checkAndExpression(token) || checkOrExpression(token)
+				|| checkTestRegexp(token) || checkContains(token) || checkNotExpression(token) || token.contains(TRUE)
 				|| token.contains(FALSE))) {
 			return true;
 		}
@@ -255,16 +278,16 @@ public class TokenUtil {
 	}
 
 	public boolean checkTrue(String token) {
-		return token != null && token.equals("true");
+		return token != null && token.replace(" ", "").equals("true");
 	}
 
 	public boolean checkFalse(String token) {
-		return token != null && token.equals("false");
+		return token != null && token.replace(" ", "").equals("false");
 	}
 
 	public boolean checkStatement(String token) {
 		if (token != null && (checkAOB(token) || checkWAT(token) || checkWDF(token) || checkWGB(token)
-				|| checkUSD(token) || checkWAW(token) || checkHMB(token))) {
+				|| checkUSD(token) || checkWAW(token) || checkHMB(token) || checkINF(token))) {
 			return true;
 		}
 		return false;
@@ -368,6 +391,20 @@ public class TokenUtil {
 		return false;
 	}
 
+	public boolean checkINF(String token) {
+		if (token != null && token.contains("wasInformedBy(")) {
+			String[] slices = token.split("wasInformedBy\\(");
+			String right = slices[1];
+			if (right != null) {
+				String[] innerSlice = right.split("\\s*,\\s*");
+				if (innerSlice.length >= 2 && checkAccessVar(innerSlice[0]) && checkAccessVar(innerSlice[1])) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public String supressReserved(String token) {
 		String result = null;
 		Map<String, String> replacements = new HashMap<>();
@@ -459,11 +496,6 @@ public class TokenUtil {
 
 	public boolean checkTokensHeader(String token) {
 		return token != null && token.contains("[tokens]");
-	}
-
-	public static void main(String[] args) {
-		String tst = "  !false";
-		System.out.println(TokenUtil.getInstance().checkNotExpression(tst));
 	}
 
 }

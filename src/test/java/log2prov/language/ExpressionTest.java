@@ -233,5 +233,16 @@ class ExpressionTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	void testParenthesis() {
+		String token = "false || ( false || ( ( ( ( true || false ) || true ) && true ) || (true && false)) || false )";
+		Expression expr = new Expression(token);
+		try {
+			assertEquals("true", expr.parse(null, null));
+		} catch (InvalidExpression e) {
+			fail(e.getMessage());
+		}
+	}
 
 }
