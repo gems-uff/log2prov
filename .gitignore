@@ -14,8 +14,6 @@ RemoteSystemsTempFile/
 *.so
 *.o
 *.so.*
-*.log
-*.provn
 *.class
 *.sqlite
 *.jar
