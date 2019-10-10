@@ -27,7 +27,7 @@ java -jar log2prov-v1.0.jar -d etc\sample.conf -i etc\sample.log -o etc\sample.p
 ### Structure
 ```
 [line]
-\\ specification of the boolean expression to test if line should be processed of ignored.
+\\ specification of the boolean expression to test if the line should be processed or ignored.
 \\ See etc\sample.conf
 
 [tokens]
@@ -47,7 +47,7 @@ java -jar log2prov-v1.0.jar -d etc\sample.conf -i etc\sample.log -o etc\sample.p
 \\ See etc\sample.conf
 
 [statements]
-\\ specifications of the statements to be outputed in output prov-n file.
+\\ specifications of the statements to be outputed in the prov-n file.
 \\ See etc\sample.conf
 
 
