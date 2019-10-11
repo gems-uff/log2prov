@@ -55,8 +55,9 @@ public class StatementExpression extends Expression {
 				Expression leftLiteral = new Expression(innerSlice[0]);
 				Expression rightLiteral = new Expression(secondParam);
 				result = super.getStringExpression().replace(innerSlice[0],
-						 TokenUtil.getInstance().impressEscaped(leftLiteral.parse(tokens, line)));
-				result = result.replace(TokenUtil.getInstance().impressEscaped(secondParam),rightLiteral.parse(tokens, line));
+						TokenUtil.getInstance().impressEscaped(leftLiteral.parse(tokens, line)));
+				result = result.replace(TokenUtil.getInstance().impressEscaped(secondParam),
+						TokenUtil.getInstance().impressEscaped(rightLiteral.parse(tokens, line)));
 				result = RegexpUtil.getInstance().replace(result, "\\s*,\\s*", ", ");
 			}
 		} catch (Exception e) {
