@@ -1,6 +1,6 @@
 # log2prov
 
-> Converts any log file to PROV-N.
+> Converts a log file to PROV-N through a definitions file.
 
 
 ```
@@ -18,9 +18,8 @@ Options:
 
 Example...
 
-```
-java -jar log2prov-v1.0.jar -d etc\sample.conf -i etc\sample.log -o etc\sample.provn
-```
+java -jar log2prov-v1.0.jar -d [etc\sample.conf](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.conf) -i [etc\sample.log](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.log) -o etc\sample.provn
+
 
 ## Definitions File
 
@@ -54,7 +53,7 @@ java -jar log2prov-v1.0.jar -d etc\sample.conf -i etc\sample.log -o etc\sample.p
 
 ```
 
-### AST
+### BNF
 ```
 expression     := IfThenExpr
                 | ConcatExpr 
