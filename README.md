@@ -18,9 +18,9 @@ Options:
 -n namespace [optional, default = #]
 ```
 
-Example...
+# Example
 
-java -jar log2prov-v1.0.jar -d [etc\sample.conf](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.conf) -i [etc\sample.log](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.log) -o etc\sample.provn
+> java -jar log2prov-v1.0.jar -d [etc\sample.conf](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.conf) -i [etc\sample.log](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.log) -o etc\sample.provn
 
 
 ## Definitions File
