@@ -18,14 +18,14 @@ Options:
 -n namespace [optional, default = #]
 ```
 
-Example...
+# Example
 
-java -jar log2prov-v1.0.jar -d [etc\sample.conf](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.conf) -i [etc\sample.log](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.log) -o etc\sample.provn
+> java -jar log2prov-v1.0.jar -d [etc\sample.conf](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.conf) -i [etc\sample.log](http://www.github.com/gems-uff/log2prov/blob/master/etc/sample.log) -o etc\sample.provn
 
 
-## Definitions File
+# Definitions File
 
-### Structure
+## Structure
 ```
 [line]
 \\ specification of the boolean expression to test if the line should be processed or ignored.
@@ -55,7 +55,7 @@ java -jar log2prov-v1.0.jar -d [etc\sample.conf](http://www.github.com/gems-uff/
 
 ```
 
-### BNF
+## BNF
 ```
 expression     := IfThenExpr
                 | ConcatExpr 
@@ -151,7 +151,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-**IC/UFF**
-
-**2019.2**
