@@ -1,6 +1,6 @@
 # log2prov
 
-> Converts a log file to PROV-N through a definitions file.
+> Converts a [log file](https://en.wikipedia.org/wiki/Log_file) to [PROV-N](https://www.w3.org/TR/prov-n/) through a [definitions file](https://github.com/gems-uff/log2prov#definitions-file).
 
 
 # Usage
