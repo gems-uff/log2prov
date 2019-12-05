@@ -28,11 +28,12 @@ public class MatchExpression extends Expression {
 				Expression leftLiteral = new Expression(left);
 				result = leftLiteral.parse(tokens, line);
 				for (int i = 1; i < slices.length; i++) {
-					String regexp = slices[i].substring(0, slices[i].length() - 1).replace("\"", "");
+					String regexp = slices[i].substring(1, slices[i].length() - 2);
 					Pattern p = Pattern.compile(regexp);
 					Matcher m = p.matcher(result);
 					if (m.find()) {
 						result = result.substring(m.start(), m.end());
+						result = result.replace("\"", "");
 					}
 
 				}

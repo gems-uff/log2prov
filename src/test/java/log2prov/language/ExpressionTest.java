@@ -244,5 +244,29 @@ class ExpressionTest {
 			fail(e.getMessage());
 		}
 	}
-
+	
+	@Test
+	void testReplace() {
+		String token = "\"t\"este\".replace(\"\"\",\"\")";
+		Expression expr = new Expression(token);
+		try {
+			assertEquals("teste", expr.parse(null, null));
+		} catch (InvalidExpression e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	void testAspas() {
+		String line = "activity(vertex_5381,-,-,[ObjectID=\"33434\", PitchAngle=\"-0,07561676\", Label=\"FiringMachineGun\", PitchInput=\"0\", Timestamp=\"1716,459\", Throttle=\"1\", SmokeWeapon2CooldownCounter=\"0\", PitchEffect=\"7\", RocketCounter=\"0\", RollEffect=\"15\", ObjectTag=\"Player02\", RollInput=\"0\", SmokeWeapon1CooldownCounter=\"0\", YawlEffect=\"12\", ForwardSpeed=\"197,7821\", AirBrakes=\"False\", Health=\"186\", MaxEnginePower=\"120\", SmokeCapacityCounter=\"12,24\", ObjectName=\"AircraftJet02\", RocketCooldownCounter=\"0\", IsAccelerating=\"False\", YawInput=\"0\", ThrottleInput=\"1\", MachinGunOverheatCounter=\"12\", RollAngle=\"-1,876083\", Life=\"2\", EnginePower=\"40\", ObjectPosition_Z=\"918,6094\", GraphFile=\"2019-05-29-14-21-49.xml\", ObjectPosition_Y=\"290,927\", ObjectPosition_X=\"1383,423\"])";
+		String expr = "$line.contains(\"activity\") || $line.contains(\"entity\") || $line.contains(\"agent\") ? $line.match(\"ObjectID=\\\"-*\\d*\\\"\").replace(\"\\\"\",\"\").replace(\"ObjectID=\",\"\")";
+		Map<String, Expression> tokens = new HashMap<String, Expression>();
+		tokens.put("line", new StringExpression(line));
+		try {
+			assertEquals("33434", new Expression(expr).parse(tokens, line));
+		} catch (InvalidExpression e) {
+			fail(e.getMessage());
+		}
+	}
+	
 }
